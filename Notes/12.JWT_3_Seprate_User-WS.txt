@@ -1,0 +1,129 @@
+https://jwt.io/introduction
+https://datatracker.ietf.org/doc/html/rfc7519
+
+Objective:
+	- Create Users WS which wil lgeenrate the JWT token for user1,admin
+	- Use the above token for manually callings books-ws and authors-ws services
+	 
+1) Spring Initializer: https://start.spring.io/
+		- Language = Java
+		- Spring Boot = 2.67
+		- Group = com.mailsonymathew.apis
+		- Artifact = users-ws
+		- Packaging = jar
+		- Java = 11
+		- Dependencies:
+				- Spring Boot Dev Tools
+				- Lombok
+				- Spring Configuration Processor
+				- Spring Web
+				- Spring Security
+				- Spring Data JPA
+				
+
+
+1) Current code directory:
+	- D:\OneDrive\Study\Java\REST-API-Security\9.users-ws-jwt
+
+2) Changes:
+	-SSL: 
+		- Copy SSL folder in resources  from 8.authors-ws-jwt
+	- Logging:
+		- Copy logback-spring.xml in resources  from 8.authors-ws-jwt
+		- Note: Normally this will be installe din webserver or reverse proxy server 
+	-application.properties: 
+		- Copy from 8.authors-ws-jwt
+		- Server port used will be 8082
+	-pom.xml
+		- Copy from 8.authors-ws 9 Note: some might be reduntant as we allready included it from spring initilaizer)
+
+	- users package:
+		- copy com.mailsonymathew.apis.authorsws.user from 8.authors-ws-jwt
+		- rename to com.mailsonymathew.apis.userssws.user 
+
+	- security package 
+		- copy com.mailsonymathew.apis.authorsws.security from 8.authors-ws-jwt
+		- rename to com.mailsonymathew.apis.usersws.security
+		- Correnct any impor errors 
+
+	- BooksWsAuthneticationEntryPoint.java:
+		- Delete as this is used for basic authentication
+
+	- UsersWsApplication.java 
+		- Include bean for BCryptPasswordEncoder:
+	
+
+	- JwtAuthorizationFilter.java
+		- Delete as authorization will be doen by books.ws and authors.ws
+			- Note: If we extend the finctionality of users-ws to include creating , updating, deleting a user then we will need this class as we would need some control on who cna chage the user 
+
+	- SecurityConfig.java
+		- Remove references to BooksWsAuthneticationEntryPoint
+		- protected void configure(HttpSecurity http) throws Exception {:	
+			- remove registration for JwtAuthorizationFilter
+		- comment out .antMatchers		
+
+	- Change use of SIGNING_SECRET from SecurityContants.java . Instead use from System.environment 
+		- Declare following in JwtAuthenticationFilter.java & JwtAuthorizationFilter.java
+			-private static String envSigningSecret = System.getenv("envSigningSecret");
+		- Use this to geernate teh jwt signatire instead of SecurityConstants.SIGNING_SECRET
+		- Configure in Eclipse:
+			- Click on Run Link on ht top banner -> Run Configurations -> Select Spring Boot App ->Environment tab -> Add:
+				- Variable=envSigningSecret
+				- Value=Dollops 
+
+- Start server for user-ws, authors-ws & books-ws:
+		- D:\OneDrive\Study\Java\REST-API-Security\9.users-ws-jwt
+		- D:\OneDrive\Study\Java\REST-API-Security\9.authors-ws-jwt
+		- D:\OneDrive\Study\Java\REST-API-Security\9.books-ws-jwt
+
+- POSTMAN:
+	- JWT-login-user-users: https://localhost:8082/login
+		- Success 200 :
+		- Response Authorization Header:
+Bearer eyJraWQiOiJHb2R6aWxsYSIsInR5cCI6IkpXVCIsImFsZyI6IkhTNTEyIn0.eyJzdWIiOiJ1c2VyMSIsIlVzZXJuYW1lIjoidXNlcjEiLCJFbmFibGVkIjp0cnVlLCJleHAiOjE2NTIxNjc0NTgsImp0aSI6IlRpZ2VyISEhISJ9.eF-K6TC0Gva3lbvJLXPGQttCz8A8TA8c0-EcCRjHhZZsDxvsz18M3JfZ9_-acdn3n2mFLr0HvSijCZq9ogcBzw
+
+	- JWT-login-admin-users :https://localhost:8082/login
+		- Success 200 :
+		- Response Authorization Header:
+
+	 - GET Author: 
+		- AUTHOR-GET-USER : GET : https://localhost:8081/v1/authors/12345678912
+			- Request Header : User Bearer Token as recieved from users-api for user login 
+
+	- GET book:
+		- JWT-GET-USER - GET : https://localhost:8080/v1/books/12345
+			- Request HEader : User Bearer Token as recieved from users-api for user login 
+
+
+Bearer eyJraWQiOiJHb2R6aWxsYSIsInR5cCI6IkpXVCIsImFsZyI6IkhTNTEyIn0.eyJzdWIiOiJhZG1pbiIsIlVzZXJuYW1lIjoiYWRtaW4iLCJFbmFibGVkIjp0cnVlLCJleHAiOjE2NTIxNjc1MzksImp0aSI6IlRpZ2VyISEhISJ9.gf37fpX_dtneiT84da06ax0vg536NfQI63UIl78DpqEmBkTsswNk1KZvbgZDvV2lOVeVP2m0DvPPGxGz6PxRfQ
+	
+	 - Create Author: 
+		- AUTHOR-POST-ADMIN : POST : https://localhost:8081/v1/authors
+			- Request Header : User Bearer Token as recieved from users-api for admin login 
+
+	- Create book:
+		- POST: JWT-POST-USER - https://localhost:8080/v1/books
+			- Request HEader : User Bearer Token as recieved from users-api for admin login 
+
+
+3) Code Cleanup:
+	- Authors-ws:
+		- D:\OneDrive\Study\Java\REST-API-Security\10.authors-ws-jwt
+		- User Package: 
+			- Remove user package
+		- Security Package:
+			-UserDetailsServiceImpl.java:
+				-  Remove UserDetailsServiceImpl.java
+			- JWTAuthenticatioN Filter
+				- Remove
+			- BooksWsAuthneticationEntryPoint.java
+				 - Remove
+			- JwtAuthorizationFilter.java
+				 - Remove references declaration of  UserDetailsServiceImpl and use in contructor
+				  - 
+			- SecurityConfig.java:
+				- REmove references declaration of  UserDetailsServiceImpl and use in contructor 
+				- REmove registration of wtAuthenticationFilter as we will only be doing authorization
+				  // register our JwtAuthenticationFileter  -> This has been moved to users-ws.java service
+		

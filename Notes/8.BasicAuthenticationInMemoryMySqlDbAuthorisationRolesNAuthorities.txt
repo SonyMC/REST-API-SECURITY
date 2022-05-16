@@ -1,0 +1,260 @@
+Hash generator: https://bcrypt-generator.com/
+
+Objective : In case we need to implment both Authrities and Roles 
+	- THis is not a normal scenario
+
+1) Current code directory:
+	- D:\OneDrive\Study\Java\REST-API-Security\6.books-ws-basic-auth-ssl-db-mysql-authorisation-roles-n-authorities
+
+2)Role: Waht role do you play : E.g. Admin, User, Developer etc.
+Authorities: What are you permitted to do base don your roles
+
+NOte: As per my understaning, Sprign sSecurity Does and Does not differentiate betwee the two 
+
+3)Following is an E.g. where Spring Security allows setting Roles  :
+
+	- SpringConfig.java
+
+		// Override method from WebSecurityConfigurerAdapter
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService).passwordEncoder(bCyptPasswordEncoder);  // Define which userDetailsService should be used and which Password Encoder to be used
+	    
+		// E..g of Spring Secuity Using both Authorities and Roles while using inMemoryAuthentication
+		//auth.inMemoryAuthentication().withUser("").password("").authorities("").roles("");  //n  number of authoritis and roles can be supplied in authorities("") androles("")
+	} 
+
+
+
+4) Following is an E.g. where Spring Security has no option of Setting Roles  :
+	- Inbuilt module interface UserDetails in Speing Secuirty:
+		- No method is provided for configuring roles
+	- class SimpleGrantedAuthority :
+			- SimpleGrantedAuthority(String role) 
+				- Here role and authorities are used interchangeably
+
+
+
+3) Cirrent DB structure:
+		- User details and Authoorities are  in MySQL DB in tables 'users' and 'authorities'
+		- Right now it is configured to hve username as a forign key between teh two tables 
+
+4) DB changes:
+	- Refer slide 10 in ppt
+		- Users table:
+			- No change
+		 	- Columns : Username(PK), PAssword, Enabled
+ 
+		-New AuthoritiesV2 table:
+			- Current Structure of Authorities table: 
+				- Columns : Authority_ID(PK), Username( FK to Users table), Authority
+			- New Structure of AuthoritiesV2
+				- Columns : Authority_ID(PK),Role( FK to new Role table), Authority
+
+		- New Table Roles
+				- Columns - Role(PK)
+
+		- New Tabel User_Role
+				- Columns : User_Role_ID(PK), Username(FK to Users table), Role( FK to Roles table)		
+
+5) 
+
+Creation of New tables:
+-------------------------
+
+
+Create AuthoritiesV2 Table
+
+	 CREATE TABLE API_SECURITY_DB.AuthoritiesV2 (
+		AUTHORITY_ID INT PRIMARY KEY,
+    		ROLE VARCHAR(128) NOT NULL,
+    		AUTHORITY VARCHAR(128) NOT NULL
+	);
+
+
+
+Create Roles Table
+
+	CREATE TABLE API_SECURITY_DB.ROLES (
+    		ROLE VARCHAR(128) NOT NULL PRIMARY KEY
+	);
+
+Create User_Role Table
+
+	CREATE TABLE API_SECURITY_DB.USER_ROLE (
+		USER_ROLE_ID INT PRIMARY KEY,	
+    		USERNAME VARCHAR(128) NOT NULL,
+    		ROLE VARCHAR(128) NOT NULL
+	);
+
+Unique key contraint for (USERNAME, ROLE)  in USER_ROLE table
+-------------------------------------------------------------------
+
+ALTER TABLE API_SECURITY_DB.USER_ROLE ADD CONSTRAINT USER_ROLE_UNIQUE UNIQUE (USERNAME, ROLE);
+
+
+Unique key contraint for (ROLE, AUTHORITY)  in AuthoritiesV2 table
+-------------------------------------------------------------------
+
+ALTER TABLE API_SECURITY_DB.AuthoritiesV2 ADD CONSTRAINT AUTHORITIES_UNIQUE UNIQUE (ROLE, AUTHORITY);
+
+
+
+Foreign Key Defintion in USER_ROLE table referencing 'username' column in USERS table
+----------------------------------------------------------------------------------------
+ALTER TABLE API_SECURITY_DB.USER_ROLE ADD CONSTRAINT USER_ROLE_FK1 FOREIGN KEY (USERNAME) REFERENCES USERS (USERNAME);
+
+Foreign Key Defintion in USER_ROLE table referencing 'role' column in ROLES table
+----------------------------------------------------------------------------------------
+ALTER TABLE API_SECURITY_DB.USER_ROLE ADD CONSTRAINT USER_ROLE_FK2 FOREIGN KEY (ROLE) REFERENCES ROLES (ROLE); 	
+
+Foreign Key Defintion in AuthoritiesV2 table referencing 'role' column in ROLES table
+----------------------------------------------------------------------------------------
+ALTER TABLE API_SECURITY_DB.AuthoritiesV2 ADD CONSTRAINT AUTHORITIESV2_FK1 FOREIGN KEY (ROLE) REFERENCES ROLES (ROLE);
+
+
+Insert records
+----------------
+
+Roles table:
+------------
+INSERT INTO `api_security_db`.`ROLES` (`ROLE`) VALUES ("ROLE_ADMIN");
+
+INSERT INTO `api_security_db`.`ROLES` (`ROLE`) VALUES ("ROLE_USER");
+
+USER_ROLE table
+----------------------
+INSERT INTO `api_security_db`.`USER_ROLE` (`USER_ROLE_ID`,`USERNAME`,`ROLE`) VALUES (1, "admin", "ROLE_ADMIN");
+
+INSERT INTO `api_security_db`.`USER_ROLE` (`USER_ROLE_ID`,`USERNAME`,`ROLE`) VALUES (2, "user1", "ROLE_USER");
+
+
+AuthoritiesV2 table 
+-------------------
+
+INSERT INTO `api_security_db`.`AUTHORITIESV2` (`AUTHORITY_ID`,`ROLE`,`AUTHORITY`) VALUES (1, "ROLE_ADMIN", "CREATE_BOOK");
+
+INSERT INTO `api_security_db`.`AUTHORITIESV2` (`AUTHORITY_ID`,`ROLE`,`AUTHORITY`) VALUES(2,"ROLE_USER","GET_BOOK");
+
+ 
+6) End Table Results:
+	
+	- User table :
+		- Columns:
+			- username,pwd,enabled
+		- Foreign Key:
+			- username in USER_ROLE table
+			- one-to-many
+				- one username can have mutiple roles 
+		- Values:
+			- admin,<encrypted pwd>,Y
+			- user,<encrypted pwd>,Y
+		
+
+	- Roles table :
+		- Columns:
+			- role
+		- FK:
+			- 'role' is a FK in tables  USER-ROLE & AUTHORITIES
+			- One-to-many:
+				- one role can multiple usernames
+				- one role can have multiple authorities 
+		- Values:
+			- ROLE_ADMIN
+			- ROLE_USER 	 
+
+	- User_Role 
+		-Columns:
+			- User_Role_ID, UserName and Role
+		-Unique Key:
+			- USERNAME, ROLE acts as a unique key
+		-FK:
+			- ROLE is a FK to Roles table
+			- Username is a FK to Users table
+			- Many to one:
+				- Mutiple roles can have one username 
+				- Mutiple users can have same role	
+		- Values:
+			- 1,admin,ROLE_ADMIN
+			- 2,user1,ROLE_USER
+		
+
+	- AuthoritiesV2 table: 
+		-Columns:
+			- Authority_ID,Role, Authority
+		-Unique Key:
+			- Role, Authority acts as a unique key
+		-FK:
+			- ROLE is a FK to Roles table
+			- Many to one:
+				- Mutiple authorities can have same role	
+		- Values:
+			- 1,ROLE_ADMIN,CREATE_BOOK
+			- 2,ROLE_ADMIN,GET_BOOK
+
+
+
+7)UserRoleEntity.java
+		- new class
+		- maps to user_role table
+		- Defien ManyToOne mapping with UserEntity
+@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "Username", nullable = false)   //Username is the Foreign Key Used
+	private UserEntity userEntity;
+
+
+
+8)UserEntity.java
+		- change
+		- Comment out One to Mnny mapping defined for Authories Entity 
+		- Define  One to Many mapping for UserRoleEntity
+
+
+
+9)UserRoleRepository.java
+		- new class
+
+
+10)AuthoritiesEntity.java
+		- changes as per new tabel structure for Authoritiesv2
+
+11)AuthoritiesRepository.java
+		- changes to get Set of Authoty Entities using input Role
+
+12)UserService.java 
+		- change private User createUserFromUserEntity(UserEntity userEntity) just allows a String of Role and there is no seprate method 
+		// 1. Create User from UserEntity
+		// 2. Fetch Authorites from Authorities table
+		// Note: 
+		//      - Flow wil be UserEntity -> UserRoleEntity -> RoleEntity -> AuthoritiesEntity
+		//     -  Flow will make better sene if referred to the Entity Relationship Diagram in Slide 10 of ppt for this course
+		// 3. Now Flatten the Stream of Stream to get the Set of Authorities
+		// 4. Now add the Role from the User_Role table as Authorities because SpringSecurity UserDetails does not support adding Roles Seprately as it does not have a SetRole method
+		//	- 		
+		// Note: 
+		//     - 	The Spring Security class SimpleGrantedAuthority implements GrantedAuthority has a just a definition of String Role and it has separate method to set the Role  
+		//     -   In User.java we are only setting the Authorities and there is no function to set roles
+		//     - In short, we need to have roles and authorites need to be extracted together from authorites
+		// 5. Now set the authorites for the user 
+            // 6. Finally return the Uer with Authorites and Roles
+
+
+13) SecurityConfig.java:
+	- Change protected void configure(HttpSecurity http) throws Exception 
+
+
+14) Note:: We will not define RoleREpository as we are using Authities Entity to extract te hroles
+
+
+14) Start teh application:
+	- POSTMAN:
+		- GET for USER1: Sample-Get-Request-Authorization-user
+			- Success
+		- GET for ADMIN: Sample-Get-Request-Authorization-admin
+			- Forbidden 
+		- POST for USER1: Sample-POST-Request-Spring-Security-Basic-Auth-mySQL-Authirization-1
+			- Forbidden
+		- POST for ADMIN: Sample-POST-Request--Authorization-admin
+			- Success 
+		
+		

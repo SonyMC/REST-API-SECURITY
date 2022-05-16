@@ -1,0 +1,242 @@
+1)Hash geernator: https://bcrypt-generator.com/
+
+
+
+2) Current code directory:
+	- D:\OneDrive\Study\Java\REST-API-Security\4.books-ws-basic-auth-ssl-db-mysql-user-rep
+
+3) User details will be stored in MySQL DB
+
+4)Dowload mysql community 	:
+	- https://dev.mysql.com/downloads/file/?id=488055
+
+
+5) I have installed MySQL
+
+6) Start MySQL service:
+		- Windows ALT+CTRL-DEL -> Task Manager -> Services -> MySQL57Svc-> Right Click -> Start
+
+7)  Open MySQL WorkBench from programs:
+	- My SQL conections -> Create new connection 
+		- ConnectioN Name = REST-API-SECURITY
+		- Hostname: 127.0.0.1 ( Default) 
+		- Port : 3306 ( Default)
+		- username: root
+		- password:Store in Vault -> root
+		- Default Schema : blank 
+		- Click on Test Connection button : Should get success response 
+		- OK
+		- Click on connection : REST-API-SECURITY
+		- Create Schema/DB:
+			- Run sql query : CREATE DATABASE api_security_db
+		- Click on Schemas tab on right side and refresh to see new schema/DB
+		- Change to the newly created DB
+				- Run sql query :USE api_security_db
+		- Create a new user with a password. This user will be used to connect from our application
+			- CREATE USER 'springuser'@'%' IDENTIFIED BY 'ThePassword'; 
+					- User: springuser
+					- password: ThePassword
+		- Give all the privileges to the new libraryUser on the newly created database library_db
+			- GRANT ALL ON api_security_db.* TO 'springuser'@'%'; 	
+
+			
+8)Create USERS Table
+
+CREATE TABLE USERS (
+	USERNAME VARCHAR(128) PRIMARY KEY,
+    PASSWORD VARCHAR(128) NOT NULL,
+    ENABLED CHAR(1) NOT NULL CHECK (ENABLED IN ('Y','N')) 
+);
+
+10)
+Insert user1 and admin  in the table users in db api_security_db
+
+Users:
+user1, pwd: encrypted value of 'myuserpassword'
+admin, pwd: encrypted value of 'myuserpassword'
+
+
+
+INSERT INTO `api_security_db`.`users`
+(`USERNAME`,
+`PASSWORD`,
+`ENABLED`)
+VALUES
+("user1",
+"$2a$12$l57f4QeOH0nz/euIbS7rQ.84fYhwR3c2un6Q89KdMOOvXmVwdbaSO",
+'Y');
+
+INSERT INTO `api_security_db`.`users`
+(`USERNAME`,
+`PASSWORD`,
+`ENABLED`)
+VALUES
+("admin",
+"$2a$12$l57f4QeOH0nz/euIbS7rQ.84fYhwR3c2un6Q89KdMOOvXmVwdbaSO",
+'Y');
+
+
+11)Verify users have been created: 
+	- SELECT * FROM users;
+
+12) Add JPA and mySQL dependencies in POM:
+			<!--  JPA Data ( We are going to use Repositories, Entities , Hibernate etc. 		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<!--  SQL connector: We are going to use MySQL for DB  		-->	
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>	
+
+13) Application.properties:
+    
+- Logging:
+
+	- Edit Application.properties file to add logging configuration 
+
+	- Add Logger to BookController.java
+
+	- logback-spring.xml:Add logback-spring.xml in resources folder to configure logging and comment out logging configuration in Application.properties file
+
+
+- DB connection string:
+	- Edit Application.properties file to add mySQL connection configurations
+
+
+14)UserEntity.java:
+	- Create new class UserEntity.java in user package
+	- This will be used for teh mapping of user obeject to user table in mySQL DB
+
+
+
+
+5) UserRepository.java : 
+		- extends CrudRepository
+		- include method UserEntity findByUsername(String username);; 
+
+6) UserService.java: 
+	- Autowire UserRepository 
+	- getUserByUserName():
+		- use userRepository.findByUsername(username)
+
+3) User.java: Extend User class to implement Spring security User Details
+		- public class User  implements UserDetails
+				- implement methods
+
+
+
+5) UserDetailsServiceImpl.java  :  implements Spring Security's UserDetailsService
+	- New package for security namesd 'Security':
+	- Create class UserDetailsServiceImpl  for implementing Spring Security's UserDetailsService	
+
+
+6) BooksWsAuthenticationEntryPoint.java:
+		- Entry point for Authentication Error
+		- Create  class BooksWsAuthneticationEntryPoint  in Security Package
+            - extend Spring Security BasicAuthenticationEntryPoint
+	   	- Override methods commence() and afterPropertiesSet()
+		- afterPropertiesSet():
+			- Set value of Basic Realm	
+		-commence():
+			- Accepts Http request, Http Response and Authentication Exception	
+			- add Header ( name =WWW-Authenticate) with Basic Realm  the vaue of which is set using the  afterPropertiesSet()
+			- Use PrintWriter to send error message in Http Body			
+
+7) SecurityConfig: New class in Security package which Extend WebSecurityConfigureAdapters -> offers security configuration via dsl methods
+		- Annotate with @Configuration and @EnableWebSecurity
+		- Extend WebSecurityConfigureAdapters -> offers security configuration via dsl methods	
+		- Declare BCryptPasswordEncoder, UserDetailsServiceImpl , BooksWsAuthneticationEntryPoint	
+		- Generate constructor using all fields
+		- Overide methods from WebSecurityConfigureAdapters:
+				- Method : protected void configure(HttpSecurity http) throws Exception 
+					- configure security policies 
+				- Method: protected void configure(AuthenticationManagerBuilder auth) throws Exception 
+					- define UserDetailsService and PasswordEncoder to be used
+
+8) In BooksWsApplication.java declare the BCryptPasswordEncoder bean else following error will be thrown during startup :
+
+/*
+ * If we do not declare the BCryptPasswordEncoder bean , following error willl be shown during startup:
+	 * ***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.mailsonymathew.apis.booksws.security.SecurityConfig required a bean of type 'org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder' in your configuration.
+
+ */
+
+
+9) Putting all together:
+		-Scenario 1: Client sends request to API in Server without Basic Authentication Header 
+		- FSI (Filter Security Interceptor): 
+			- Request will first be intercepted by FSI
+			- Will expect Authorization Basic Header
+				- This is because in SecurityConfig.java within overriden configure(HttpSecurity http) method we have specified using BAsic Authentication  for any requests
+				- If client does not send a basic authentication scheme, it will throw an exception 
+					   - Access Denied Exception:
+							- Once this error is thrown, control will eb passed over to Authentication Entry Point defined in BooksWsAuthenticationEntryPoint
+								- In BooksWsAuthenticationEntryPoint we will add Header , Basic Realm , send error and output error message
+								
+						- Client gets 401 response 
+								
+		- Scenario 2: Client now resends the request using Basic Authrization Header 
+		- FSI((Filter Security Interceptor):
+			- Finds the Basic Authorization Header 
+			- Invoke Basic Authentication Filter
+				- It will B64 decode the Authurization Header 
+				- Create Token: Once decoding is done it will create a Username and PAssword Authentication token :
+						-  Token will contain username and password
+						- Now control will be passed to Authentication Manager 
+				-  Authentication Manager:
+					-UserDetalsServiceImpl.java : Will invoke UserDetail service ( UserDetalsServiceImpl.java extends UserSetailsService)
+						- Calls overridden method loadUserByUserName(string username) 
+								- username will be available in the token
+								- The method uses UserService.getUserByUserName(username) to get the user
+							- UserService.java:
+								- The constructor will create an user using teh folowing values:
+									- username : 'user1'
+									- pwd: b64 encoded value of 'myuserpassword':
+							  			- "$2a$12$A/KX9V2n5c4Nf1AMUw/BN.o2U.QR6H1cvRge51EZourVylnPJfBM."	
+					- Authentication Manager now matches the value of the password while creating the UserService object with the value of the password in the Token generaated from the Basic Authentication Filter
+						- Note: Pwd matching is automatically taken care of by Authentication Manager
+					- If pwd matches: 
+						- Success response code will be sent back along with success responce resounrce 
+					- If pwd does not match:
+						- 401 error will be returned back from  BooksWsAuthenticationEntryPoint
+
+10)  Run project4.books-ws-basic-auth-inmem-ssl-db-mysql-ser-rep :
+			
+			- Note:
+				-  Since we are using logback-spring.xml for logging, no details will be showed in terminal. All application logging details can be found in D:\OneDrive\Study\Java\Logs\books-apis.log
+				- TO see logs in console, commnet out spring.profiles.active=test in application.propertis
+				- I
+
+
+			- Test withbasic authentication header:
+						- Postman: 
+							- Sample-Get-Request-Spring-Security-Basic-Auth-userRep-from-mySQL
+								- url:https://localhost:8080/v1/books/12345
+								- Authorization Header:
+								- Username = user1	
+								- Password = myuserpassword
+								- Wil get 200 response with user details
+							- Sample-Get-Request-Spring-Security-Basic-Auth-userRep-from-mySQL-v2
+								- Authorization Header:
+								- Username = admin	
+								- Password = myuserpassword
+								- Wil get 200 response with user details
+
+
+
+

@@ -1,0 +1,121 @@
+
+
+2) Current code directory:
+	- D:\OneDrive\Study\Java\REST-API-Security\2.books-ws-basic-auth-inmem-ssl
+
+3) User.java: Extend User class to implement Spring security User Details
+		- public class User  implements UserDetails
+				- implement methods
+
+4) UserService.java: Hash the passord
+	- Refer https://bcrypt-generator.com/
+	- Code is present in UserService.java
+	- Hashes cannot be reverse engineered to get the original text
+	- Use the above link to geernate hash of 'myuserpassword':
+			- $2a$12$A/KX9V2n5c4Nf1AMUw/BN.o2U.QR6H1cvRge51EZourVylnPJfBM.
+
+5) UserDetailsServiceImpl.jva  :  implements Spring Security's UserDetailsService
+	- New package for security namesd 'Security':
+	- Create class UserDetailsServiceImpl  for implementing Spring Security's UserDetailsService	
+
+
+6) BooksWsAuthenticationEntryPoint.java:
+		- Entry point for Authentication Error
+		- Create  class BooksWsAuthneticationEntryPoint  in Security Package
+            - extend Spring Security BasicAuthenticationEntryPoint
+	   	- Override methods commence() and afterPropertiesSet()
+		- afterPropertiesSet():
+			- Set value of Basic Realm	
+		-commence():
+			- Accepts Http request, Http Response and Authentication Exception	
+			- add Header ( name =WWW-Authenticate) with Basic Realm  the vaue of which is set using the  afterPropertiesSet()
+			- Use PrintWriter to send error message in Http Body			
+
+7) SecurityConfig: New class in Security package which Extend WebSecurityConfigureAdapters -> offers security configuration via dsl methods
+		- Annotate with @Configuration and @EnableWebSecurity
+		- Extend WebSecurityConfigureAdapters -> offers security configuration via dsl methods	
+		- Declare BCryptPasswordEncoder, UserDetailsServiceImpl , BooksWsAuthneticationEntryPoint	
+		- Generate constructor using all fields
+		- Overide methods from WebSecurityConfigureAdapters:
+				- Method : protected void configure(HttpSecurity http) throws Exception 
+					- configure security policies 
+				- Method: protected void configure(AuthenticationManagerBuilder auth) throws Exception 
+					- define UserDetailsService and PasswordEncoder to be used
+
+8) In BooksWsApplication.java declare the BCryptPasswordEncoder bean else following error will be thrown during startup :
+
+/*
+ * If we do not declare the BCryptPasswordEncoder bean , followign error willl be shown during startup:
+	 * ***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.mailsonymathew.apis.booksws.security.SecurityConfig required a bean of type 'org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder' in your configuration.
+
+ */
+
+
+9) Putting all together:
+		-Scenario 1: Client sends request to API in Server withot BAsic Authentication Header 
+		- FSI (Filter Security Interceptor): 
+			- Request will first be intercepted by FSI
+			- Will expect Authorization Basic Header
+				- This is because in SecurityConfig.java within overriden configure(HttpSecurity http) method we have specified using BAsic Authentication  for any requests
+				- If client does not send a basic authentication scheme, it will throw an exception 
+					   - Access Denied Exception:
+							- Once this error is thrown, control will eb passed over to Authentication Entry Point defined in BooksWsAuthenticationEntryPoint
+								- In BooksWsAuthenticationEntryPoint we will add Header , Basic Realm , send error and output error message
+								
+						- Client gets 401 response 
+								
+		- Scenario 2: Client now resends the request using Basic Authrozation Header 
+		- FSI((Filter Security Interceptor):
+			- Finds the Basic Authrization Header 
+			- Invoke Basic Authentication Filter
+				- It will B64 decode the Authurization Header 
+				- Create Token: Once decoding is done it will create a Username and PAssword Authentication token :
+						-  Token will contain username and password
+						- Now control will be passed to Authentication Manager 
+				-  Authentication Manager:
+					-UserDetalsServiceImpl.java : Will invoke UserDetail service ( UserDetalsServiceImpl.java extends UserSetailsService)
+						- Calls overridden method loadUserByUserName(string username) 
+								- username will be available in the token
+								- The method uses UserService.getUserByUserName(username) to get the user
+							- UserService.java:
+								- The constructor will create an user using teh folowing values:
+									- username : 'myusername'
+									- pwd: b64 encoded value of 'myuserpassword':
+							  			- "$2a$12$A/KX9V2n5c4Nf1AMUw/BN.o2U.QR6H1cvRge51EZourVylnPJfBM."	
+					- Authentication Manager now matches the value of the password while creatign the UserService object with the value of the password in the Token generaated from the Basic Authentication Filter
+						- Note: Pwd matching is automatically taken care of by Authentication Maangers
+					- If pwd matches: 
+						- Success response code will be sent back along with success responce resounrce 
+					- If pwd does not match:
+						- 401 error will be returned back from  BooksWsAuthenticationEntryPoint
+
+		- Run project books-ws-basic-auth-immem-ssl in debug mode to see extra detials 
+			- OptionaL : Eclipse -> Package Explorer -> Right click project -> Debug -> Spring Boot App
+			- OPtionaL : Add a breakpoint by double clicking the line conaining response.addHeader in BooksWsAuthenicationEntryPoint.java 
+			- First test without basic authentication header:
+				- Postman: Sample-Get-Request-Spring-Security-Basic-Auth-In-Mem-Error
+						- Request will be in flight mode if we have set a breakpoint
+						- We wil get 401 unauthorized responses
+						- Response Header : 
+							- Name = WWW-AUthneticate; Value = Basic realm="Something Missing Buddy!!!"
+						- Response Body : 
+							- "Basic Authentication Required. Please supply appropriate credentials!!!"
+
+			- Second test withbasic authentication header:
+						- Postman: Sample-Get-Request-Spring-Security-Basic-Auth-In-Mem
+						- Authorization Header:
+							- Username = myusername
+							- Password = myuserpassword
+						- Wil get 200 response with user details
+

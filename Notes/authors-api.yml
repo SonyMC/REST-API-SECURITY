@@ -1,0 +1,93 @@
+openapi: 3.0.0
+
+info:
+  description: This is a Spec file Authors API. This is just a demo for the REST API Security course
+  version: "1.0.0"
+  title: Authors API
+  contact:
+    email: sanjay.bharatiya@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/bharatiyas/authors-api/1.0.0
+
+tags:
+  - name: authors
+    description: Manage Authors for the System
+
+security: 
+  - bearerAuth: []
+paths:
+  /v1/authors:
+    post:
+      tags:
+        - authors
+      summary: Add a new authors
+      operationId: registerAuthor
+      responses:
+        '201':
+          description: Register a new Author
+        '403':
+          description: Forbidden  
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Author'
+
+  /v1/authors/{authorId}:
+    get:
+      tags:
+        - authors
+      summary: Gets the details of the author by ID. 
+      description: Returns the details of the author
+      operationId: getAuthorById
+      parameters:
+        - name: authorId
+          in: path
+          description: ID of author to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Author found by the supplied ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '404':
+          description: Author not found
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error
+          
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+   Author:
+      type: object
+      properties:
+        authorId:
+          type: string
+          example: "1234456"
+        firstName:
+          type: string
+          example: "Sanjay"  
+        lastName:
+          type: string
+          example: "Bharatiya"
+        email:
+          type: string
+          format: email
+          example: 'sanjay.bharatiya@email.com'

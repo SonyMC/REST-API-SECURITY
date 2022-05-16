@@ -1,0 +1,160 @@
+Hash generator: https://bcrypt-generator.com/
+
+1) Obective it restrict POST request for book creation to an admin user while GT can b eperformed by any user
+
+
+2) Current code directory:
+	- D:\OneDrive\Study\Java\REST-API-Security\5.books-ws-basic-auth-ssl-db-mysql-authorisation
+
+3) User details will be stored in MySQL DB
+
+4)Dowload mysql community:
+	- https://dev.mysql.com/downloads/file/?id=488055
+
+5) I have installed MySQL
+
+6) Start MySQL service:
+		- Windows ALT+CTRL-DEL -> Tasm Manager -> Services -> MySQL57Svc-> Right Click -> Start
+
+7)  Open MySQL WorkBench from programs:
+	- My SQL conections -> Create new connection 
+		- ConnectioN Name = REST-API-SECURITY
+		- Hostname: 127.0.0.1 ( Default) 
+		- Port : 3306 ( Default)
+		- username: root
+		- password:Store in Vault -> root
+	
+
+
+
+
+
+8) BooksController.java:
+	- Add POST method for creating a book:
+		- public ResponseEntity<Book> addBook(@RequestBody Book book)
+
+9) Start application:
+		- POSTMAN: https://localhost:8080/v1/books
+				- will return a success response 
+
+
+				
+10)Create Authorities Table
+	CREATE TABLE API_SECURITY_DB.AUTHORITIES (
+		AUTHORITY_ID INT PRIMARY KEY,	
+    		USERNAME VARCHAR(128) NOT NULL,
+    		AUTHORITY VARCHAR(128) NOT NULL
+	);
+
+
+11) Alter Authorities table;
+	
+	- Add unique contraint for username and authority:
+		- ALTER TABLE API_SECURITY_DB.AUTHORITIES ADD CONSTRAINT AUTHORITIES_UNIQUE UNIQUE (USERNAME, AUTHORITY);
+	- Add foreign key contraint specyifing 'USERNAME' in 'AUTHORITIES' table references 'USERNAME' in 'USERS' tables
+		- ALTER TABLE API_SECURITY_DB.AUTHORITIES ADD CONSTRAINT AUTHORITIES_FK1 FOREIGN KEY (USERNAME) REFERENCES USERS (USERNAME); 
+
+
+12) Insert rows into Authorities table for  users 'admin' and 'user1' with authorities 'ADMIN' & 'USER' 
+	
+	-  INSERT INTO `api_security_db`.`AUTHORITIES`(`AUTHORITY_ID`,`USERNAME`,`AUTHORITY`)
+VALUES (1, "admin", "ADMIN"); 	
+	INSERT INTO `api_security_db`.`AUTHORITIES`(`AUTHORITY_ID`,`USERNAME`,`AUTHORITY`)
+VALUES (2, "user1", "USER");
+
+
+10)User.java: 
+	Authorization:
+		 -Spring provides GrantedAuthority :
+			-  Permission for user or principal  is granted
+	- User.java: 
+		
+		- In User.java we have implemented Spring UserDetails interface :
+				- We need to override this method for grantinng authorities:
+					- public Collection<? extends GrantedAuthority> getAuthorities() 
+					- Modify methofd to return authorities ( Note: Late  in UserService.java we will use SimpleGrantedAuthority implmentation of GrantedAuthoritys
+		- Declare Set containing Granted Authorities
+			private Set<GrantedAuthority> authorities;
+		- Generate setter for authorities declared above 
+
+
+
+11)Create AuthoritiesEntity.java in user package:
+	- Will be used as a mapping to teh table Authorities
+	 - Note : We will not directly define username as it is a foreign key to 'users' table and is already defined in UserEntity.java. Instead we will specify an  UserEntity and join column using 'username'
+	/*
+	 *  One to Many mapping between User and Authority as one user may have multiple authorities
+	 *  We need to create many to one mapping between the AuthoritiesEntity and the UserEntity
+	 */
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "Username", nullable = false)   //Username is the Foreign Key Used
+	private UserEntity userEntity;
+
+12)UserEntity.java
+	- Define a Set of AuthoritiesEntity as a single user can have multiple authorities
+
+	- Declare Set<AuthoritiesEntity>
+	- 
+    // Many to One Mapping defined in AuthoritiesEntity for 'UserEntity' using foreign key 'Username'
+    // Note: Joining column is not required here as it isalready defined in AuthoritiesEntity'java  for UserEntity . Also UserEntity is  the owner of relationship
+    @OneToMany(mappedBy = "userEntity", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<AuthoritiesEntity> authorityEntities ;
+
+	- Define getters and setters 
+
+
+13)Create AuthoritiesRepository.java  in user package
+	- Declare method UserEntity findByUserEntity(UserEntity userEntity)
+		- Note: Here we are not trying to find the Authorities for a gven Authority ID or Username as the mapping will be many to one. Instead we will get the User with th related authorities( one-to-many mapping)
+		- //One to Many mapping between User and  Authority is defined in UserEntity.javaby decalration of 'private Set<AuthoritiesEntity> authorityEntities'
+
+
+14)UserService.java
+	- Declare AuthoritiesRepository
+	- Create constructor with both UserRepository & userRepository
+	- Amend method for creating User from user authority:
+			- setAuthorities : will return a set of GrantedAuthoritiess
+
+15?Note: We have defined user details in 'users' table and related authorities in 'authorities' table
+		- Our application will not create users but only create or get books using BookController.java
+		- Username and pwd will eb supplied by the client in teh request which will be validated against 'users' table using UserEntity.java and 'authorities' table using AuthoritiesEntity.java
+		- The authority is linked to the user via the foreignkey 'username'	
+		- Authority is also called a Role & User is also known as a Principa
+
+15) SecurityConfig;java:
+	- Amend method to include Authorization for authorities 'USER' and 'ADMIN':
+		- configure(HttpSecurity http) throws Exception:
+												/*
+									 * CSRF (Cross-Site Request Forgery ) is an attack that forces authenticated users to submit a request to a Web application against which they are currently authenticated. CSRF attacks exploit the trust a Web application has in an authenticated user.
+									 * CORS (
+Cross-Origin Resource Sharing )is a mechanism to allow two different domains to talk to each other (by relaxing same-origin policy)
+									 */
+		                            http.
+		                                  cors().and().csrf().disable() // disable cors and csrf : 
+										  .authorizeHttpRequests() // authorize requests using antMatcher() methods  below. Authority is also called a Role & User is also known as a Principal
+										  .antMatchers("/v1/books/{bookId}").hasAuthority("USER")   // authorize GET request by book id only if user has an authority of USER ( we have added Set<AuthoritiesEntity> while to USER creation in UserService.java(( the authority is defined in Authorites table for the username 'user1'))
+										  .antMatchers("/v1/books").hasAuthority("ADMIN")        // authorize POST reques to create a Book only for ADMIN( the authority is defined in Authorites table for the username 'admin')
+										  .anyRequest()  // authorize all requests
+										  .authenticated() .and().httpBasic()  // authenticate request using Basic Authentication
+										  .authenticationEntryPoint(authenticationEntryPoint);  // supply authnetication entry point which we have defined in BooksWsAuthneticationEntryPoint 	
+
+
+16) Start Application
+
+17) Postman:
+	- GET request using user 'user1'( table 'users') with authority 'USER'(table 'authorities')  : 
+			-Sample-Get-Request-Authorization-user 
+				- 200 success 
+      - GET request using user 'admin'( table 'users') with authority 'ADMIN'(table 'authorities')  : 
+			- Sample-Get-Request-Authorization-admin  : 
+				- 403 forbidden as we have not provided GET access for admin
+	- POST request using user 'user1'( table 'users') with authority 'USER'(table 'authorities')  : 
+			-Sample-POST-Request-Spring-Security-Basic-Auth-mySQL-Authirization-2
+				- 403 forbidden as we have not provided POST access for user1
+      - POST request using user 'admin'( table 'users') with authority 'ADMIN'(table 'authorities')  : 
+			- Sample-POST-Request--Authorization-admins  : 
+				- Sample-POST-Request-Spring-Security-Basic-Auth-mySQL-Authirization-2
+				- 201 Created				
+
+
+		

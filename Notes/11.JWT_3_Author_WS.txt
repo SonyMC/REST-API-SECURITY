@@ -1,0 +1,109 @@
+https://jwt.io/introduction
+https://datatracker.ietf.org/doc/html/rfc7519
+
+Objective:
+	- New API for Authors which will  include JWT geernation and authorization code.
+	-  include users authorisation logic as defined in DB table and copied from 7.books-ws-jwt
+
+
+
+1) Current code directory:
+	- D:\OneDrive\Study\Java\REST-API-Security\8.authors-ws-jwt
+
+
+2) API for authors:
+	- POST : /v1/authors 
+	- GET  : /v1/authors/{authorId}
+
+3)Authors API:
+	- D:\OneDrive\Study\Java\REST-API-Security\8.authors-ws
+	- Note: We will not be defining authors in DB or authors entity
+	- application.propoertes:
+		- server.port=8081
+	-Author.java:
+		- data model
+	- AuthorController
+		- controller class 
+		- POST: create an author : localhost:8081/v1/authors  
+		- GET  : Get an author   : localhost:8081/v1/authors/{authorId}
+
+
+
+
+4) Secure Authors API with JWT:
+	- Copy security package from 7.books-ws-jwt
+		- Rename package to 'com.mailsonymathew.apis.authorsws.security'
+	- Copy user package from 7.books-ws-jwt
+		- REname package to 'com.mailsonymathew.apis.authorsws.user'
+	-BooksWsApplication:
+		-  Include Bean for BCryptPasswordEncoder in 
+		 @Bean
+
+   		public BCryptPasswordEncoder bCryptPasswordEncoder() {
+	   	return new BCryptPasswordEncoder();
+   }
+
+
+5) Specify DB connections and other proprties:
+
+	- Amend application.properties as in 7.books-ws-jwt
+
+6) Enable SSL:
+	- Copy  resources/ssl folder from 7.books-ws-jwt
+
+7) Modify SecurityCOnfig.java:
+	- function configure(HttpSecurity http) throws Exception
+		- 	                                   
+* Note : Spring Security automatically prefixes hasRole with string  'ROLE' so there is no need to specify ROLE_USER or ROLE_ADMIN explicitly as declared in DB tables.However if we explictilty prefix ROLE , Spring Security is inetlligent enough not to prefix it again 
+    .antMatchers("/v1/authors/{authorId}").access("hasRole('USER') and hasAuthority('GET_AUTHOR')") // Refer AUTHORITIESV2 table
+    .antMatchers("/v1/authors").access("hasRole('ADMIN') and hasAuthority('CREATE_AUTHOR')") // Refer AUTHORITIESV2 table        // authorize POST request to create an  Author only for ADMIN( the authority is defined in Authorites table for the username 'admin')
+		
+
+8) Insert new records in AuthoritiesV2 table 
+-------------------
+INSERT INTO `api_security_db`.`AUTHORITIESV2` (`AUTHORITY_ID`,`ROLE`,`AUTHORITY`) VALUES (3, "ROLE_ADMIN", "CREATE_AUTHOR");
+INSERT INTO `api_security_db`.`AUTHORITIESV2` (`AUTHORITY_ID`,`ROLE`,`AUTHORITY`) VALUES (4, "ROLE_USER", "GET_AUTHOR");
+
+
+9s) Change use of SIGNING_SECRET from SecurityContants.java . Instead use from System.environment 
+		- Declare following in JwtAuthenticationFilter.java & JwtAuthorizationFilter.java
+			-private static String envSigningSecret = System.getenv("envSigningSecret");
+		- Use this to geernate teh jwt signatire instead of SecurityConstants.SIGNING_SECRET
+		- Configure in Eclipse:
+			- Click on Run Link on ht top banner -> Run Configurations -> Environment tab -> Add:
+				- Variable=envSigningSecret
+				- Value=Dollops 
+
+
+
+12)Start Server using Run Configuration
+
+
+
+7)Start the server using run configuration option
+
+
+
+8) POSTMAN: 
+	- Login user:
+		-JWT-login-user-author : 	
+			-https://localhost:8081/login
+			- user credentials is supplied in request body
+		- Success and Bearer token wil eb geernated in Response Authorization Header:
+Bearer eyJraWQiOiJHb2R6aWxsYSIsInR5cCI6IkpXVCIsImFsZyI6IkhTNTEyIn0.eyJzdWIiOiJ1c2VyMSIsIlVzZXJuYW1lIjoidXNlcjEiLCJFbmFibGVkIjp0cnVlLCJleHAiOjE2NTIwOTI0MzMsImp0aSI6IlRpZ2VyISEhISJ9.PilrpQySARqYmsdV-WcihjG2PgtWfl8qSbVbXH98lqbizaEjJ0ffGCY9E4B1g3SY71hjhJkAFiVg3X0Zxh8YdA
+
+	- Login admin:
+		-JWT-login-admin-author : 	
+			-https://localhost:8081/login
+			- User credential sis supplied in request body
+		- Success and Bearer token wil eb geernated in Response Authorization Header:
+Bearer eyJraWQiOiJHb2R6aWxsYSIsInR5cCI6IkpXVCIsImFsZyI6IkhTNTEyIn0.eyJzdWIiOiJhZG1pbiIsIlVzZXJuYW1lIjoiYWRtaW4iLCJFbmFibGVkIjp0cnVlLCJleHAiOjE2NTIwOTI5MDEsImp0aSI6IlRpZ2VyISEhISJ9.CY4DlvuQzJ1hHNBKYQbDNGpOy7SV0i2urCRhEq5FcIOCcTuCDNmsAyMtkixQVWiRKWcRFWHiIJ8WNxjz2rS62A
+
+	- AUTHOR-POST-ADMINT :localhost:8081/v1/authors
+		- Authorization: Bearer Token
+		
+		- Success 
+	- AUTHOR-GET-USER : localhost:8081/v1/authors/12345
+		- Auhorization: Bearer Token
+		- Success
+

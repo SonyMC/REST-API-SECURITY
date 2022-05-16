@@ -1,0 +1,157 @@
+1) Reference code : D:\OneDrive\Study\Java\WorkPlace2020\library-api-v2
+
+2) Current code directory:
+	- D:\OneDrive\Study\Java\REST-API-Security\1.books-ws-basic-auth-ssl
+
+3) Spring security:
+		<!--Security :  Use this for API security 	
+		// If we use this, Spring login page will be presented where we have to enter teh userid as 'user' and pwd as geernated in the Spring console during startup
+		//If we are using POSTMAN , fill in Authorization tab for Basic auth
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId> 
+		</dependency>	
+
+
+4)HTTPS and Generating Self Signed certifcate:
+	- HTTPS secures teh channel using TLS
+      - Normally taken care of by Infrastructure team
+	- Transmission will be encrypted ( body + header)
+	- First step:
+		- SSL handshake btw Client and Server:
+				- Server normally exposes HTTPS port in 443
+				- Client will initiate the SSL handshake by sending HTTPS request
+				- Server will send the client a certificate to client 
+					- Certificate will contain Public Key of the Server
+					- Server would initially have raised a CSR( Certificate Signing Request) with a CA((Certifying Authority)
+					- The CA would have signed and issued the certifcate to the Server
+				
+				- Client recieves the Certificate:
+					- Client verifies the certifcate and public key of the Server
+					- Client uses the list of CA(Certifying Authority) List to vertify the Certificate and Public Key of the Server
+					- Once verification is done by client it will generate a new Secret Key 
+					- This Secret Key of the client is encrypted using the Public Key of the server. Thsi is called signing of the Secret Key. 
+					- This encrypted/signed Secret Key is send back to the Server 		 
+    				
+				- Server gets signed/encrypted Secret Key( signed with PK of Server) from Client:
+					- Server has its Private Key
+					- It decrypts the Secret Key using it's Private Key( as the Secret Key was signed using it's Public Key)
+					- The Server now has the Secret Key of the Client
+ 
+		- Request/Response( after handshake):
+			- The Client will encrypt all requets using seret key 
+			- The Server will decrypt the request usign the secret key 
+			- The Server sends the response by encrypting it using the secret key 
+		      - The Client decrypts the repsonse using the secret key  	
+
+	   - This is an E.g. of a Symmetric Cryptography 
+
+	  - Self Signed Certificate(SSC): 			
+		- As we do not want to spend money on buying a certificate from a CA ;)
+		- Java keytool can be used to generate our certificate., private key and publick key
+			- Keytool location:
+				- C:\Program Files\JDK17\bin\keytool.exe 	
+		- Generate SSL , Public Key and Private Key 
+			-cmd(as admin): keytool -genkeypair -alias tcserver -storetype JKS -keystore serverkeystore.jks -keyalg RSA -keysize 2048 -keypass Rikkitikki -storepass Rikkitikki
+				- Note:
+					- *** KEy is valid only for 90 days after which we have to regenerate
+					- Key will be geenrated in C:\Program Files\JDK17\bin\ as serverkeystore.jks
+						- HAve moved it to D:\OneDrive\Study\Java\REST-API-Security\Notes\Keystore 
+					- Here we use 'tcserver' represeting tomcat server. Can be any name
+					- 'JKS'stands for java key store 
+						- we can also use PKCS12 instead of JKS
+						- 'PKCS12' stands for Public Key Cryptography Standards and it is an industry wide comonly used standard 	
+		
+					- Cmd:keytool -genkeypair -alias tcserver -storetype PKCS12 -keystore serverkeystore.pkcs12 -keyalg RSA -keysize 2048 -keypass Rikkitikki -storepass Rikkitikki
+					- Key will be geenrated in C:\Program Files\JDK17\bin\ as serverkeystore.pkcs12
+						- HAve moved it to D:\OneDrive\Study\Java\REST-API-Security\Notes\Keystore 
+			- Once cmd is executed you will get following list of Questions :
+- What is your first and last name?
+  [Unknown]:  Sony
+What is the name of your organizational unit?
+  [Unknown]:  Mathew
+What is the name of your organization?
+  [Unknown]:  Chirayil
+What is the name of your City or Locality?
+  [Unknown]:  Pothencode
+What is the name of your State or Province?
+  [Unknown]:  Kerala
+What is the two-letter country code for this unit?
+  [Unknown]:  IN
+Is CN=Sony, OU=Mathew, O=Chirayil, L=Pothencode, ST=Kerala, C=IN correct?
+  [no]:  Yes
+
+
+Warning:
+The JKS keystore uses a proprietary format. It is recommended to migrate to PKCS12 which is an industry standard format using "keytool -importkeystore -srckeystore serverkeystore.jks -destkeystore serverkeystore.jks -deststoretype pkcs12".
+
+	- Certiicate , Public Key and Provate Key will eb stored in the keystore
+	- The certificate will be geenrated in C:\Program Files\JDK17\bin\:
+			- serverkeystore.pkcs12
+	- To see list of available cmds type 'keytool' in cmd
+
+	- List certificate:
+		- cmd: keytool -list -keystore serverkeystore.jks -storepass Rikkitikki
+		- cmd: keytool -list -keystore serverkeystore.pkcs12 -storepass Rikkitikki
+
+
+4) Enable TLS for user api:
+		- Copy serverkeystore.pkcs12 file from C:\Program Files\JDK17\bin\
+		- Create new folder SSL in src/main/resources
+	     - Paste serverkeystore.pkcs12 in src/main/resources/SSl
+		- Edit the application.prpertis file to include the following certificate details:
+			- # Specify SSL certifcate details
+			 #server.ssl.key-store=classpath:SSL/serverkeystore.jks
+			 server.ssl.key-store=classpath:SSL/serverkeystore.pkcs12
+			 #server.ssl.key-store-type=JKS
+			server.ssl.key-store-type=PKCS12
+                  server.ssl.key-store-password=Rikkitikki
+                  server.ssl.key-alias=tcserver	
+
+5) Postman:
+	- Collection : REST-API-SECURITY
+		- uri: http://localhost:8080/v1/books/12345
+		- Sample-Get-Request-Spring-Security-Basic-Auth
+				- Authorization:
+					- Type = Basic Auth 
+					- Username= user
+					- password= < copy from spring console>
+		- Send request: 
+				- Will get following response:
+					- 400 Bad Request
+					This combination of host and port requires TLS.
+
+		- change uri to https 
+			- uri: https://localhost:8080/v1/books/12345
+			-Sample-Get-Request-Spring-Security-Basic-Auth-TLS
+			- Response: 
+				- Could not get response
+                        - SSL Error: Self signed certificate
+			- Disable SSL verification( File -> Settings -> General -> SSL certificate validation)  and send request again
+
+
+6) Examining Certificates;
+	- Go to any banking webite( E.g ICICI) 
+	- Notice the padlock and https symbol beosde the url
+	- Click on padlock:
+		- Connection is secure -> This site has a valid certificate issued to ICICI Bank Limited [IN], issued by a trusted authority.​
+
+			- Click on certificat eicon towardd sthe right hand top corner 	
+			- Will show certificate details
+			- Copying certificate:
+				- go  to 'Details' tab:
+					- Click 'Copy to File'
+					- Certificate Export Wizard 
+							 - Select Format and export 
+				- This can be used when we need to manually added a certificate to a trusted store
+						- Use keytools to view and edit cacerts:
+							- Refer: 
+	      -https://stackoverflow.com/questions/20224446/how-to-view-and-edit-cacerts-file
+		- https://docs.microfocus.com/SM/9.52/Hybrid/Content/security/concepts/example_viewing_the_contents_of_a_cacerts_file.htm
+
+	- jdk stores list of trusted certificates iN;
+		- C:\Program Files\JDK17\lib\security\cacerts
+	- jdk stores blacklisted certifcates in:
+		- C:\Program Files\Eclipse Foundation\jdk-16.0.2.7-hotspot\lib\security\blocked.certs
+				 

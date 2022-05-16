@@ -1,0 +1,158 @@
+https://jwt.io/introduction
+https://datatracker.ietf.org/doc/html/rfc7519
+
+jwts are used to mantain integroty of data
+
+Objective: Generate jwt as header in response and to use it as authorization request header for other calls
+Flow:
+a) login to get the jwt toke: POST : https://localhost:8080/login  ( refer POSTMAN 'JWT-login' for request details) 
+
+
+1) Current code directory:
+	- D:\OneDrive\Study\Java\REST-API-Security\7.books-ws-jwt
+	- Reference:
+		- D:\OneDrive\Study\Java\WorkPlace2020\library-api-v2
+
+2) POM.xml:
+	- 		<!--JWT :  Handling JWT handling functionality . We have to specify version as thsi is not packaged with Spring Boot -->
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>3.19.1</version>
+		</dependency>
+	
+
+3) We need to create filter as by default Spring Security does not have afilter for JWT
+
+4)New class : security/JwtAuthenticationFilter.java
+	- Extend UsernamePasswordAuthenticationFilter
+//1.This class is first in chain of authorisation responsible for authenticating the input usser & pwd in request body  and returnign a jwt token
+//2. In this case the username and pwd will need to be set using a login REST API(https://localhost:8080/login) as we do not have web form UI
+//3. Spring automatically figures where this filter should fit in the whole security chain as we are extending 'UsernamePasswordAuthenticationFilter'( though if we want we can define the trigerring point. We won't do this here).
+//4. Once this class is executed, the user will take the JWT token returned and call the JWTAuthorizationFilter class which will be the second in command to this class. 
+
+
+5) SecurityConstants.java
+	- add constant values used in JwtAuthenticationFilter.java above
+
+
+6)SecurityConfig.java:
+	- Commment out teh dependency injection of 'authenticationEntryPoint' in teh constructor 
+	-Comment out following in protected void configure(HttpSecurity http) throws Exception :
+	                             	  //.and().httpBasic()  // authenticate request using Basic Authentication
+						// .authenticationEntryPoint(authenticationEntryPoint);  // supply authentication entry point which we have defined in BooksWsAuthneticationEntryPoint 
+
+	- Register our new filter : JwtAuthenticationFilter
+	- Disable session creation as we do not want the app to geenrate the JSESSIONID which we had seen in previous course  .Hence each time only if JWT is present , will the request be successfull.
+
+7)Start the server
+
+8)Postman:
+	- JWT-login
+		- POST : https://localhost:8080/login  -> Note : This API is provided by default in Sprign Security 
+		- Authorization : No Auth 
+		- Body:
+{
+    "username": "user1",
+    "password": "myuserpassword"
+}
+
+		
+
+		- Success Rospense : 200
+		- Go to Response Headers  to see geenrated JWT token : Authorization:
+			- Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsIlVzZXJuYW1lIjoidXNlcjEiLCJFbmFibGVkIjp0cnVlLCJleHAiOjE2NTE4MjQzOTksImp0aSI6IlRpZ2VyISEhISJ9.c3Z8gweF8idA1x1xbL5JAi_pKSW4K1FqXH7xw5rB_vSQR_aupSS4y3GK4SbcLRgx81UsqNcMnGaIW2FIpJEJHg
+			- Copy string value after 'Bearer' prefix
+			- Go to jwt.ip and decode to see JWT Header, payload and Signature psuedo code
+			- Our payload will contain the following:
+				{
+  "sub": "user1",
+  "Username": "user1",
+  "Enabled": true,
+  "exp": 1651824399,
+  "jti": "Tiger!!!!"
+}
+
+
+as we have coded:
+			String jwtToken = JWT.create()
+						   .withSubject(authUser.getUsername())
+						   .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
+						   .withClaim("Username",authUser.getUsername())
+						   .withClaim("Enabled", authUser.isEnabled())
+					       .withJWTId(SecurityConstants.JWT_ID) 
+						   .sign(algorithmHS);
+
+		- No JSESSIONID cookie:  Also observe that POSTMAN has not generated any JSESSIONID cookies as we have specified a stateless session  in SecurityConfig.java
+
+	 -- JWT-login-admin
+		- POST : https://localhost:8080/login  -> Note : This API is provided by default in Spring Security 
+		- POST : https://localhost:8080/login  -> Note : This API is provided by default in Sprign Security 
+		- Authorization : No Auth 
+		- Body:
+{
+    "username": "admin",
+    "password": "myuserpassword"
+
+}
+
+	- Success with Authorization header
+
+
+
+8) Authorize the jwt token:
+
+	- security/JwtAuthorizationFilter.java
+//1. This class will be called by the user after getting the JWT token in the JwtAuthenticationFilter class.
+//2. This calls will essentially allow the user to call subsequent APIs using the JWT issued above
+//3. We will extend BasicAuthenticationFilter which is used to authorize details in the Http Request Header 
+
+
+
+9)SecurityConfig.java
+	- Add JwtAuthorizationFilter.java
+
+
+10) Change use of SIGNING_SECRET from SecurityContants.java . Instead use from System.environment 
+		- Declare following in JwtAuthenticationFilter.java & JwtAuthorizationFilter.java
+			-private static String envSigningSecret = System.getenv("envSigningSecret");
+		- Use this to geernate teh jwt signatire instead of SecurityConstants.SIGNING_SECRET
+		- Configure in Eclipse:
+			- Click on Run Link on ht top banner -> Run Configurations -> Environment tab -> Add:
+				- Variable=envSigningSecret
+				- Value=Dollops 
+
+
+10) Start the server:
+
+11) POSTMAN:
+	- 1) Generate JWT token in response header for user1:
+		- JWT-login-user : POST - https://localhost:8080/login
+		- Bearer eyJraWQiOiJHb2R6aWxsYSIsInR5cCI6IkpXVCIsImFsZyI6IkhTNTEyIn0.eyJzdWIiOiJhZG1pbiIsIlVzZXJuYW1lIjoiYWRtaW4iLCJFbmFibGVkIjp0cnVlLCJleHAiOjE2NTE4NDU4NjksImp0aSI6IlRpZ2VyISEhISJ9.o8w2TQnUWeTMaHBtdvuGT8f0cYZhWmDgivjxAZu5vD12IMWkVEs86834fnBVBI-DQuCpnRmNWOHWHNj-8JVlJQA
+
+
+	-2)Try to POST using user JWT:
+		JWT-POST-USER : POST - https://localhost:8080/v1/books
+		- Request-> Authorization= Bearer Token -> Token = Past value of jwt token folowing Bearer prefix above
+		- REsponse : 403 forbidden -> as user cannot create book 
+
+	-3) try to GET using user JWT:
+		JWT-GET-USER : GET - https://localhost:8080/v1/books/12345
+		- Request-> Authorization= Bearer Token -> Token = Past value of jwt token folowing Bearer prefix above
+		- REsponse : Success
+
+	-4) Generate JWT token in response header for admin:
+		- JWT-login-admin : POST - https://localhost:8080/login
+		- Bearer eyJraWQiOiJHb2R6aWxsYSIsInR5cCI6IkpXVCIsImFsZyI6IkhTNTEyIn0.eyJzdWIiOiJhZG1pbiIsIlVzZXJuYW1lIjoiYWRtaW4iLCJFbmFibGVkIjp0cnVlLCJleHAiOjE2NTE4NDgyMzYsImp0aSI6IlRpZ2VyISEhISJ9.ZJOwk0RKvpyDxer2mqlkATZrhzgIrPKnuElp6jX2fsMEfKtsi9_OZW0X-jNbG6Zkguw3Qunup1iN1qwj41f3ZA
+
+	-5)Try to POST using admin JWT:
+		JWT-POST-ADMIN : POST - https://localhost:8080/v1/books
+		- Request-> Authorization= Bearer Token -> Token = Past value of jwt token folowing Bearer prefix above
+		- REsponse : 210 - Created
+
+	-6) try to GET using admin JWT:
+		JWT-GET-ADMIN : GET - https://localhost:8080/v1/books/12345
+		- Request-> Authorization= Bearer Token -> Token = Past value of jwt token folowing Bearer prefix above
+		- REsponse : 403 - Foridden
+ 
+		     

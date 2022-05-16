@@ -1,0 +1,22 @@
+
+
+2) Current code directory:
+	- D:\OneDrive\Study\Java\REST-API-Security\1.books-ws-basic-auth-ssl
+
+3) Spring Web dependency uses SpringMVC and Apache Tomcat as the default embedded container 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+
+4)Servlet:
+	- Request comes in from client and in the Server cotnainer it is handled by Servlets( E.g. doGet, doPost etc.)
+	- In SPring MVC normally there is only one Servlet called Dispatcher Servlet
+			- Responsible fro receiving client requests and transferrign them to other components
+
+5)Filter:
+	- Is put before Servlet
+	- Can dynamically intercept Requests and Response
+	- Can implment functionlaities such as Security, Logging, Auditing, Monitoring etc.
+	- Multiple Filters can be used to form a Filter Chain. E.g DefaultSecurityFilterChain

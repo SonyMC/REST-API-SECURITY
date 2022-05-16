@@ -1,0 +1,99 @@
+https://jwt.io/introduction
+https://datatracker.ietf.org/doc/html/rfc7519
+
+Objective:
+	- Add roles/authorities as a claim in jst token generation in users-ws
+	- Clean code-base 
+ 
+	- users.ws: D:\OneDrive\Study\Java\REST-API-Security\10.users-ws-jwt
+	- books-ws : D:\OneDrive\Study\Java\REST-API-Security\10..books-ws-jwt
+	-authors-ws: D:\OneDrive\Study\Java\REST-API-Security\10.authors-ws-jwt
+	 
+
+	-Users-ws:
+		- JwtAuthenticationFilter.java:
+			- Add authorities as a claim to teh jwt genration
+		- Run app 
+		- POSTMAN: JWT-login-user-users: POST - https://localhost:8082/login
+			- Success
+		 - Copy Response Authorization Header
+		 - jwt.io:
+			- Decode toke to see authorities in claims within jwt payload:
+{
+  "sub": "user1",
+  "Username": "user1",
+  "Enabled": true,
+  "Roles": "GET_BOOK,ROLE_USER,GET_AUTHOR",
+  "exp": 1652448504,
+  "jti": "Tiger!!!!"
+}
+		- POSTMAN: JWT-login-admin-users: POST - https://localhost:8082/login
+			- Success
+		 - Copy Response Authorization Header
+		 - jwt.io:
+			- Decode toke to see authorities in claims within jwt payload:
+
+{
+  "sub": "admin",
+  "Username": "admin",
+  "Enabled": true,
+  "Roles": "ROLE_ADMIN,CREATE_AUTHOR,CREATE_BOOK",
+  "exp": 1652449286,
+  "jti": "Tiger!!!!"
+}
+
+		  
+
+	- Authors-ws:
+		- 
+		- User Package: 
+			- Remove user package
+		- Security Package:
+			- User.java
+				- Copy from user-ws
+			-UserDetailsServiceImpl.java:
+				-  Change
+			- JWTAuthenticatioN Filter
+				- Remove
+			- BooksWsAuthneticationEntryPoint.java
+				 - Remove
+			- JwtAuthorizationFilter.java
+				 - Remove references declaration of  UserDetailsServiceImpl and use in contructor
+				  - 
+			- SecurityConfig.java:
+				- Change
+
+
+	- Start users-ws and authors-ws
+	- POSTMAN: 	
+		- POSTMAN: 
+		- JWT-login-user-users: POST - https://localhost:8082/login
+			- Success
+			 - Copy Response Authorization Header	
+		
+		- AUTHOR-GET-USER: GET https://localhost:8081/v1/authors/12345678912
+			- Set Bearer token in Request Authorization Header using above jwt
+			- Success 
+
+		- POSTMAN: JWT-login-admin-users: POST - https://localhost:8082/login
+			- Success
+		 - Copy Response Authorization Header
+
+		- AUTHOR-POST-ADMIN : POST https://localhost:8081/v1/authors
+			- Set Bearer token in Request Authorization Header using above jwt
+			- Success 
+
+
+***********To do : Change books-ws similarly 
+		
+*********************
+
+	- Change use of SIGNING_SECRET from SecurityContants.java . Instead use from System.environment 
+		- Declare following in JwtAuthenticationFilter.java & JwtAuthorizationFilter.java
+			-private static String envSigningSecret = System.getenv("envSigningSecret");
+		- Use this to geernate teh jwt signatire instead of SecurityConstants.SIGNING_SECRET
+		- Configure in Eclipse:
+			- Click on Run Link on ht top banner -> Run Configurations -> Select Spring Boot App ->Environment tab -> Add:
+				- Variable=envSigningSecret
+				- Value=Dollops 
+		
