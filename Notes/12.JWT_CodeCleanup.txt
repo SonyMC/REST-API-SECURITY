@@ -55,7 +55,7 @@ Objective:
 				-  Change
 			- JWTAuthenticatioN Filter
 				- Remove
-			- BooksWsAuthneticationEntryPoint.java
+			- BooksWsAuthenticationEntryPoint.java
 				 - Remove
 			- JwtAuthorizationFilter.java
 				 - Remove references declaration of  UserDetailsServiceImpl and use in contructor
@@ -63,10 +63,13 @@ Objective:
 			- SecurityConfig.java:
 				- Change
 
+	- Change books-ws similarly
 
-	- Start users-ws and authors-ws
+
+	- Start MySQL service, users-ws , authors-ws,books-w
+
 	- POSTMAN: 	
-		- POSTMAN: 
+	
 		- JWT-login-user-users: POST - https://localhost:8082/login
 			- Success
 			 - Copy Response Authorization Header	
@@ -75,7 +78,11 @@ Objective:
 			- Set Bearer token in Request Authorization Header using above jwt
 			- Success 
 
-		- POSTMAN: JWT-login-admin-users: POST - https://localhost:8082/login
+		- BOOK-GET-USER : GET https://localhost:8080/v1/books/12345
+			- Set Bearer token in Request Authorization Header using above jwt
+			- Success 
+
+		- JWT-login-admin-users: POST - https://localhost:8082/login
 			- Success
 		 - Copy Response Authorization Header
 
@@ -83,8 +90,12 @@ Objective:
 			- Set Bearer token in Request Authorization Header using above jwt
 			- Success 
 
+		- BOOK-POST-ADMIN : POST https://localhost:8080/v1/books
+			- Set Bearer token in Request Authorization Header using above jwt
+			- Success 
 
-***********To do : Change books-ws similarly 
+
+*
 		
 *********************
 

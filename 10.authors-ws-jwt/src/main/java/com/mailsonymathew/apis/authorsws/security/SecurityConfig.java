@@ -59,7 +59,8 @@ Cross-Origin Resource Sharing )is a mechanism to allow two different domains to 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 	    auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(bCyptPasswordEncoder);   
-		// E..g of Spring Security Using both Authorities and Roles while using inMemoryAuthentication
+		
+	    // E..g of Spring Security Using both Authorities and Roles while using inMemoryAuthentication
 		//auth.inMemoryAuthentication().withUser("").password("").authorities("").roles("");  //n  number of authorities and roles can be supplied in authorities("") androles("")
 	} 
 

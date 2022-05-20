@@ -1,0 +1,18 @@
+Refer 
+OpenIDConnect.png
+
+
+1) OIDC INTRO:
+	- OAuth2.0 is only for Authorization i..e grant access to data and features 
+	- OIDC = Open ID COnnect 
+	- OIDC sits on top of OAuth 2.0
+	- Not mutually exclusive ( i.e OIDC uses OAUth2.0)
+	- Identity - Information about logged in person 
+	- Authorization server becomes Identity Provider
+	- OIDC enables SSO( Single Sign On)
+
+2) Flow: 
+	-Refer  OpenIDConnect.png
+	- Scope in the intial request will eb set to 'open_id' ( this can only be used if authorization server supports OIDC)
+	- In addition to Access Token , an ID_TOKEN is also returned
+	- ID_TOKEN is jwt

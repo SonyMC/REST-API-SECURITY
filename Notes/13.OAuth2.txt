@@ -1,0 +1,88 @@
+1) Refer OAuth2 ppt 
+2) StackOverflow -> Login -> 
+	-> Will show option to login using either via GitHub or FB
+	-> Choose option Login with GITHUB	:
+		- Copy url: 
+https://github.com/login?client_id=01b478c0264a1fbd7183&return_to=%2Flogin%2Foauth%2Fauthorize%3Fclient_id%3D01b478c0264a1fbd7183%26redirect_uri%3Dhttps%253A%252F%252Fstackauth.com%252Fauth%252Foauth2%252Fgithub%26response_type%3Dcode%26scope%3Duser%253Aemail%26state%3D%257B%2522sid%2522%253A1%252C%2522st%2522%253A%252259%253A3%253Abbc%252C16%253A7daa97b827caed2c%252C10%253A1652783722%252C16%253A629b54c9c81f98ac%252C02eb74387919c23d265a62d5cedc1c09098913afdf22efb114180b4a5ce93d14%2522%252C%2522cid%2522%253A%252201b478c0264a1fbd7183%2522%252C%2522k%2522%253A%2522GitHub%2522%252C%2522ses%2522%253A%25224e52f8c85c1f48b3b033ac23806c45fa%2522%257D
+		- Enter GITHUB creds:
+			- Authorize Stack Overflow
+				- Authorize Stach Exchage
+	-> Essentially we have logged into Stack OVerflow without creatign a cred in it ( we have used creds of GITHUB) 
+
+
+3) Basic terminolgy:\
+
+Resource Owner:
+
+	- User 
+Client
+
+	- App which wants to access the data or wants to perform action on resource owners behalf. In above E.g thsi is Stack Overflow
+
+Authorization Server
+	- App which already knows Resource owner ( i.e Resourceowner already has an account here). In above E.g this is GITHUB
+
+Resource Server
+	-Server where API or service is running. Provides data to the client. Thsi API is what the Client wants to use on bahalf of Resource Owner. Sometimes Authorization Server and Resource Server are the same 
+
+Redirect URL( as in this E.g Github)
+	- Also called Callback URI.
+		- Inspect url which we had copied above. It will contain 'redirect_uri'
+
+Response Type
+	- Type of response which CLient expects to receive. Most common type is code. Search fro Dcode in above url.
+
+Scope
+	- Is the persmission that CLient needs( E.g. access to data).
+		- Authorization Server and teh CLient will have a list of scopes they understand( E/g READ profile, Write profile etc.) 
+		- Search for 'scope' in abov ulr( Two scopes Duser, email)
+
+Consent
+	- AuthorizatioN Server takes the scope and verifies whether Resource owner wants to allow teh request 
+
+Client ID
+	- Used to identfy client with AuthorizatioN Server
+	- Search for 'client_id' in abov url 
+
+Client Secret
+	- Secret string which only Client and Authorization Server know to secureltytransfer data
+	- Will not be available in url
+	- Will be sent through back channel
+
+
+Authorization Code
+	- Short lived temporary code which Authorization seerver sends to Client
+	- Client sends back Authorization code toAuthorization Server to get Access Code 
+	- Access code is uded for further actions on Resource Server
+	 
+
+Access Token
+	- Refer Authorization Code notes above
+
+
+
+4) Authorization Code Flow:
+	- Refer OAuth2 ppt 
+
+
+5) Access Token : 
+	- Is sent a s NBearer Token using the Authorization Header
+
+6) Note: Remember there should be a tie up between teh client and the authorization server before making teh request 
+	- In above E.g. Cient Stack OVerFlow will already have a tie up with GitHUb
+
+
+
+7) Channels:
+	- Back Channel : 
+		- Secure
+		- HTTPS
+	- From Channel :
+		- Less Secure  
+
+
+8)  OAuth 2.0 Flows:
+	- Authorization Code FLow ( Fron Channel + Back Channe;lResponse type used is 'Token';) 
+	- Implicit FLow ( Fron Channel ONly  ; Response type used is 'Token'; rfer ppt )
+	- Resource owner pwd credentials(Back Channel only - used for legacy apps)
+	- Client creds( Back Channel Only - seever to server to communication)

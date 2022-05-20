@@ -1,6 +1,9 @@
 package com.mailsonymathew.apis.booksws.security;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.management.RuntimeErrorException;
 import javax.servlet.FilterChain;
@@ -13,12 +16,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+
 
 
 
@@ -28,22 +34,15 @@ import com.auth0.jwt.algorithms.Algorithm;
 public class JwtAuthorizationFilter  extends BasicAuthenticationFilter { // Note: BasicAuthenticationFilte will be used  in Spring Security Filter chain when the JWT token is passed in the Authorization Header
 
 	// create logger
-	private static Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+	private static Logger logger = LoggerFactory.getLogger(JwtAuthorizationFilter.class);
 	
 	// Define the jwt signing secret as an environment variable 
 	private static String envSigningSecret = System.getenv("envSigningSecret");
+
 	
-	private UserDetailsServiceImpl userDetailsServiceImpl;
-	
-//	// Auto-generated constructor. 
-//	public JwtAuthorizationFilter(AuthenticationManager authenticationManager) {
-//		super(authenticationManager);
-//	
-//	}
-	
-   public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserDetailsServiceImpl userDetailsServiceImpl) {
-	        super(authenticationManager);
-	        this.userDetailsServiceImpl = userDetailsServiceImpl;
+   public JwtAuthorizationFilter(AuthenticationManager authenticationManagerl) {
+	        super(authenticationManagerl);
+
 	    }
 
 
@@ -73,7 +72,7 @@ public class JwtAuthorizationFilter  extends BasicAuthenticationFilter { // Note
 		
 		UsernamePasswordAuthenticationToken authenticatedToken= getAuthentication(authorizationHeader);  //getAuthentication() is defined below
 						
-		// If everythign is ok then set the token in the Security Context Holder
+		// If everything is OK then set the token in the Security Context Holder
 		SecurityContextHolder.getContext().setAuthentication(authenticatedToken);
 		
 		// finally continue with the filter chain 
@@ -93,29 +92,43 @@ public class JwtAuthorizationFilter  extends BasicAuthenticationFilter { // Note
 		
 			
 			try{
-			String userNameFromJwt = JWT  // decrypt the JWT token in header using the secret key 
-									.require(algorithmHS)   // use the same secret key to decrypt for verfication
-									.build() //JWT verifier
-									.verify(authorizationHeader.replace(SecurityConstants.BEARER_TOKEN_PREFIX, ""))  // remove the prefix we had put in previously 
-									.getSubject(); // we had set the user name as the subject previously 
+				
+		   DecodedJWT decodedJWT = 
+				   JWT  // decrypt the JWT token in header using the secret key 
+					.require(algorithmHS)   // use the same secret key to decrypt for verification
+					.build() //JWT verifier
+					.verify(authorizationHeader.replace(SecurityConstants.BEARER_TOKEN_PREFIX, "")) ; // remove the prefix we had put in previously 
+		   
+		  
+			if(decodedJWT != null) { 
+				
+				// Get Subject
+				String userNameFromJwt =  decodedJWT.getSubject(); 
+					
+
 			
-			
-			
-			// Verify username and return Authenticated Token containing usrname and auhorities
+			// Verify username and return Authenticated Token containing username and authorities
 			if ((userNameFromJwt != null) &&  
 				((userNameFromJwt.equalsIgnoreCase("user1")) || (userNameFromJwt.equalsIgnoreCase("admin")) ))
 
-				{
-				//Get user details from UserDetailsServiceImpl
-				UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(userNameFromJwt);
-				// Input parms are Principal, Credentials and Authority Collection. We will pass the credentials or pwd as empty
-				return new UsernamePasswordAuthenticationToken(userNameFromJwt, null, userDetails.getAuthorities());  
+					{
+				
+				// Get Claims 
+				Set<SimpleGrantedAuthority> authorities = 
+										Stream.of(decodedJWT.getClaim("Roles")  // Authorities are stored under claim named 'Roles' ( refer JwtAuthenticationFilter.java in user-ws) and separated using commas 
+										.asString().split(","))   
+										.map(authority -> new SimpleGrantedAuthority(authority))
+										.collect(Collectors.toSet());
+				
+				// Input parms are Principal, Credentials and Authority Collection. We will pass the credentials or pwd as empty.l
+				return new UsernamePasswordAuthenticationToken(userNameFromJwt, null, authorities);  
 				/*
 				 * Note : If we are not setting authorities we can pass an empty collection as follows
 				 */
 				// return new UsernamePasswordAuthenticationToken(userNameFromJwt, null, new ArrayList<>());
+
+					}
 				}
-					
 			}catch(BadCredentialsException bex){
 				logger.error("Authorization Failed!!",bex.getMessage());
 				throw bex;

@@ -56,7 +56,7 @@ public class JwtAuthorizationFilter  extends BasicAuthenticationFilter { // Note
 		String authorizationHeader = request.getHeader(SecurityConstants.AUTHORIZATION_HEADER); // AUTHORIZATION_HEADER = '"Authorization"
 		
 		// Validate the Authorization Header in Request containing the JWT
-		// In case there is no authorization header OR the authorization header length is zero OR there is one but it does not cstart with  "Bearer " 
+		// In case there is no authorisation header OR the authorisation header length is zero OR there is one but it does not cstart with  "Bearer " 
 		// then ignore header & return control back to filter back to filter chain 
 		if( authorizationHeader == null	||    
 			authorizationHeader.trim().length() == 0 ||	
@@ -65,13 +65,13 @@ public class JwtAuthorizationFilter  extends BasicAuthenticationFilter { // Note
 			return;
 		}
 		
-		// if everything is ok,then :
-		 //1. Authenticate the JWT token available in the Authorization Header by decrypting the jwt usign the same secret key that we used fro jwt creation
+		// if everything is OK,then :
+		 //1. Authenticate the JWT token available in the Authorization Header by decrypting the jwt using the same secret key that we used fro jwt creation
 		// 2. Set the Security context using the Authenticated token
 		
 		UsernamePasswordAuthenticationToken authenticatedToken= getAuthentication(authorizationHeader);  //getAuthentication() is defined below
 						
-		// If everythign is ok then set the token in the Security Context Holder
+		// If everything is OK then set the token in the Security Context Holder
 		SecurityContextHolder.getContext().setAuthentication(authenticatedToken);
 		
 		// finally continue with the filter chain 
@@ -94,7 +94,7 @@ public class JwtAuthorizationFilter  extends BasicAuthenticationFilter { // Note
 				
 		   DecodedJWT decodedJWT = 
 				   JWT  // decrypt the JWT token in header using the secret key 
-					.require(algorithmHS)   // use the same secret key to decrypt for verfication
+					.require(algorithmHS)   // use the same secret key to decrypt for verification
 					.build() //JWT verifier
 					.verify(authorizationHeader.replace(SecurityConstants.BEARER_TOKEN_PREFIX, "")) ; // remove the prefix we had put in previously 
 		   

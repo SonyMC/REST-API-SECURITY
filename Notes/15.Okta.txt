@@ -1,0 +1,41 @@
+Refer:
+	- Okta.png
+
+1)Okta Introduction:
+	- Build on AWS
+	- Identity Management Service
+	- Provision and manage Users like employees, customers, suppliers, etc.
+	- Connect users to cloud SaaS apps
+	- It can streamline the user experience by connectiing users to cloud and Saas apps
+	- Supports different security mechanisms like Authentication, Authorization, SSO, MFA etc.
+	- Supports various industry standards like SAML, OAuth, OIDC, etc
+	- Identity-Managemetn-as-a-Service(IDaaS)
+
+2) Other competing vendors:
+	- OneLogin
+	- Microsoft Azure Active Directory
+	- Ping Indentity
+	- Duo Securitys
+	
+
+3) Creating an Account in Octa:
+	- https://developer.okta.com/
+		- Free account
+		- Okta’s Developer Edition provides everything you need to evaluate and explore Okta for your company. Up to 100 MAU with access to most key developer features in Okta’s products for free with no time limit.
+		- I have used Githib OAuth to sign-up
+
+	- Adding a person-:
+		- Directory -> People -> Add Person
+		- More Actioons: 
+			- Import users from CSV
+			- Activate
+			- Deactivate
+			- Expire pwds
+			- Unlock people
+	- API: 
+		- Security -> API
+
+
+4)Registering Users API in Okta:
+	- 
+				

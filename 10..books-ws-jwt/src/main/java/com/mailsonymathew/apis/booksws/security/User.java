@@ -1,4 +1,4 @@
-package com.mailsonymathew.apis.booksws.user;
+package com.mailsonymathew.apis.booksws.security;
 
 import java.util.Collection;
 import java.util.Set;
