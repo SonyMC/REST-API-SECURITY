@@ -222,5 +222,5 @@ Configure Consent Scop Authorization server:
 						- Delete cookies 
 						- https://localhost:8082/users/login
 						- Authorization screen will be shown after enterign teh credentials wfter which we will get consent form asking consent for openid, profile information, email address
-							UserName: 00u55y4owchfr09y45d7
-							UserAuthorities: [ROLE_USER, SCOPE_email, SCOPE_openid, SCOPE_profile]					
+							- UserName: 00u55y4owchfr09y45d7
+							UserAuthorities: [ROLE_USER, SCOPE_email, SCOPE_openid, SCOPE_profile]						
