@@ -1,0 +1,1120 @@
+{
+	"info": {
+		"_postman_id": "a6eb0d3f-f145-4bd0-af5c-f86a2b2dc47c",
+		"name": "REST-API-SECURITY",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11315858"
+	},
+	"item": [
+		{
+			"name": "Sample-Get-Request-Spring-Security-Basic-Auth",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "c2462ef6-b423-4e7a-b0b2-044db2ca1e7a",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/v1/books/12345",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books",
+						"12345"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sample-Get-Request-Spring-Security-Basic-Auth-TLS",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "e14f6e8e-be92-4a37-890c-36fb923423bd",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8080/v1/books/12345",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books",
+						"12345"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sample-Get-Request-Spring-Security-Basic-Auth-In-Mem-Error",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8080/v1/books/12345",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books",
+						"12345"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sample-Get-Request-Spring-Security-Basic-Auth-In-Mem",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "myuserpassword",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "myusername",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8080/v1/books/12345",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books",
+						"12345"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sample-Get-Request-Spring-Security-Basic-Auth-In-Mem-UserRepo-FromFile",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user1",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "myuserpassword",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8080/v1/books/12345",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books",
+						"12345"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sample-Get-Request-Spring-Security-Basic-Auth-userRep-from-mySQL",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user1",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "myuserpassword",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8080/v1/books/12345",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books",
+						"12345"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sample-Get-Request-Spring-Security-Basic-Auth-userRep-from-mySQL-v2",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "myuserpassword",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8080/v1/books/12345",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books",
+						"12345"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sample-Get-Request-Authorization-user",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user1",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "myuserpassword",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8080/v1/books/12345",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books",
+						"12345"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BOOK-GET-USER",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJraWQiOiJHb2R6aWxsYSIsInR5cCI6IkpXVCIsImFsZyI6IkhTNTEyIn0.eyJzdWIiOiJ1c2VyMSIsIlVzZXJuYW1lIjoidXNlcjEiLCJFbmFibGVkIjp0cnVlLCJSb2xlcyI6IkdFVF9CT09LLFJPTEVfVVNFUixHRVRfQVVUSE9SIiwiZXhwIjoxNjUzMDI5ODMwLCJqdGkiOiJUaWdlciEhISEifQ.2swdpwQAo8R4hXeQX_5V_e1L3tZS4gsVrWFz28GxhfvZL8QsjZy3AhRcfXeEOmVkq8cToStGUWnhCtPXBy5-2g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8080/v1/books/12345",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books",
+						"12345"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JWT-GET-USER",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJraWQiOiJHb2R6aWxsYSIsInR5cCI6IkpXVCIsImFsZyI6IkhTNTEyIn0.eyJzdWIiOiJ1c2VyMSIsIlVzZXJuYW1lIjoidXNlcjEiLCJFbmFibGVkIjp0cnVlLCJleHAiOjE2NTIxNjk5NzMsImp0aSI6IlRpZ2VyISEhISJ9.1Fmx3E9L2XaRB0C9lclWACFce6ct1syRW7NYW-511TxGsrbz1QcpAsOC1Cgh0Yb5MWpvogp5MqW7iPylpg25sQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8080/v1/books/12345",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books",
+						"12345"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sample-Get-Request-Authorization-admin",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "myuserpassword",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8080/v1/books/12345",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books",
+						"12345"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JWT-GET-ADMIN",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJraWQiOiJHb2R6aWxsYSIsInR5cCI6IkpXVCIsImFsZyI6IkhTNTEyIn0.eyJzdWIiOiJhZG1pbiIsIlVzZXJuYW1lIjoiYWRtaW4iLCJFbmFibGVkIjp0cnVlLCJleHAiOjE2NTE4NDgyMzYsImp0aSI6IlRpZ2VyISEhISJ9.ZJOwk0RKvpyDxer2mqlkATZrhzgIrPKnuElp6jX2fsMEfKtsi9_OZW0X-jNbG6Zkguw3Qunup1iN1qwj41f3ZA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8080/v1/books/12345",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books",
+						"12345"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sample-POST-Request-Spring-Security-Basic-Auth-mySQL-Authirization-1",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user1",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "myuserpassword",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"API Security\",\r\n    \"publisher\": \"Chirayil Publishers\",\r\n    \"datePublished\": \"01-01-2010\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8080/v1/books",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BOOK-POST-ADMIN",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJraWQiOiJHb2R6aWxsYSIsInR5cCI6IkpXVCIsImFsZyI6IkhTNTEyIn0.eyJzdWIiOiJhZG1pbiIsIlVzZXJuYW1lIjoiYWRtaW4iLCJFbmFibGVkIjp0cnVlLCJSb2xlcyI6IlJPTEVfQURNSU4sQ1JFQVRFX0FVVEhPUixDUkVBVEVfQk9PSyIsImV4cCI6MTY1MzAzMDA0OCwianRpIjoiVGlnZXIhISEhIn0.djj1LUuAHv_FBKFLa2GVQTe2Yl4UKUCihg6SLs0eiXhPUPuFpWdzpb3aQyRRIwVnC5JNDQ6Ft-MrSKMo7k4NXg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"API Security\",\r\n    \"publisher\": \"Chirayil Publishers\",\r\n    \"datePublished\": \"01-01-2010\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8080/v1/books",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JWT-POST-USER",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJraWQiOiJHb2R6aWxsYSIsInR5cCI6IkpXVCIsImFsZyI6IkhTNTEyIn0.eyJzdWIiOiJhZG1pbiIsIlVzZXJuYW1lIjoiYWRtaW4iLCJFbmFibGVkIjp0cnVlLCJleHAiOjE2NTIxNjk1MzgsImp0aSI6IlRpZ2VyISEhISJ9.VTMcYPoArtP5t8p0g2dO5z9e_yO1DuOzLAYc7AP52BYMHw6Zrp1h-gg7rMT5btJcvVs51pFLYFjN6krLMx-hIA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"API Security\",\r\n    \"publisher\": \"Chirayil Publishers\",\r\n    \"datePublished\": \"01-01-2010\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8080/v1/books",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sample-POST-Request--Authorization-admin",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "myuserpassword",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Ahoy!!\",\r\n    \"publisher\": \"Chirayil Publishers\",\r\n    \"datePublished\": \"01-01-2011\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8080/v1/books",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JWT-POST-ADMIN",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJraWQiOiJHb2R6aWxsYSIsInR5cCI6IkpXVCIsImFsZyI6IkhTNTEyIn0.eyJzdWIiOiJhZG1pbiIsIlVzZXJuYW1lIjoiYWRtaW4iLCJFbmFibGVkIjp0cnVlLCJleHAiOjE2NTE5MTM2NTgsImp0aSI6IlRpZ2VyISEhISJ9.Zcz4mmp1riUAAq4gg97Cicsv8o95NkViXdPguJkvf6OJ04gemM7IjU8Cgo6kEupJuDPIhGZeB4L-Hx7WAKqYqQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Ahoy!!\",\r\n    \"publisher\": \"Chirayil Publishers\",\r\n    \"datePublished\": \"01-01-2011\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8080/v1/books",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JWT-login-user",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"user1\",\r\n    \"password\": \"myuserpassword\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8080/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JWT-login-user-author",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"user1\",\r\n    \"password\": \"myuserpassword\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8081/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JWT-login-user-users",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"user1\",\r\n    \"password\": \"myuserpassword\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8082/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JWT-login-admin",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"myuserpassword\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8080/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JWT-login-admin-author",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"myuserpassword\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8081/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JWT-login-admin-users",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"myuserpassword\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8082/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AUTHOR-POST-ADMIN",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJraWQiOiJHb2R6aWxsYSIsInR5cCI6IkpXVCIsImFsZyI6IkhTNTEyIn0.eyJzdWIiOiJhZG1pbiIsIlVzZXJuYW1lIjoiYWRtaW4iLCJFbmFibGVkIjp0cnVlLCJSb2xlcyI6IlJPTEVfQURNSU4sQ1JFQVRFX0FVVEhPUixDUkVBVEVfQk9PSyIsImV4cCI6MTY1MjQ1MTgwMywianRpIjoiVGlnZXIhISEhIn0.YHcX01lIzq4uzUm7wZ02CjcSS8_IHwdaFnpGNFgr52OtuegP9PLGEqFwepp6U6RW_qnu6jATqq4vFS4DWDOHOg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"authorId\": \"KR\",\r\n    \"firstName\": \"Kaduva\",\r\n    \"lastName\": \"Ramendran\",\r\n    \"email\": \"kadurab@hotmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8081/v1/authors",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AUTHOR-GET-USER",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJraWQiOiJHb2R6aWxsYSIsInR5cCI6IkpXVCIsImFsZyI6IkhTNTEyIn0.eyJzdWIiOiJ1c2VyMSIsIlVzZXJuYW1lIjoidXNlcjEiLCJFbmFibGVkIjp0cnVlLCJSb2xlcyI6IkdFVF9CT09LLFJPTEVfVVNFUixHRVRfQVVUSE9SIiwiZXhwIjoxNjUzMDI5MzY0LCJqdGkiOiJUaWdlciEhISEifQ.m-zppuKo11k_Q6HMyMKZKaORuW3o5wSuhqx6uKbsCeCVy0hDt5uGsU3n3WqLubs6Mhc_IJgIkIt-1n7UhWFphw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8081/v1/authors/12345678912",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"authors",
+						"12345678912"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Okta-login",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8082/users/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete-Grant",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "SSWS 00cKQzjjSgY4J_r4sFmFpH1kBJ6kDjV-g40QMaljmZ",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://dev-45554186.okta.com/api/v1/users/00u55y4owchfr09y45d7/grants",
+					"protocol": "https",
+					"host": [
+						"dev-45554186",
+						"okta",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"00u55y4owchfr09y45d7",
+						"grants"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Okta-Access-ID-Token-Request",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "client_authentication",
+							"value": "body",
+							"type": "string"
+						},
+						{
+							"key": "state",
+							"value": "myTestState",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "openid",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "i1EHil-gDpKkvG-65dU8b0vd5Ff63vQsJYtXQA6s",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "0oa546fn9qVdmB3lj5d7",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://dev-45554186.okta.com/oauth2/default/v1/token",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://dev-45554186.okta.com/oauth2/default/v1/authorize",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https://www.getpostman.com/oauth2/callback",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "okta-token-1",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Okta-Access-ID-Token-Request-profile",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "scope",
+							"value": "openid profile",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "body",
+							"type": "string"
+						},
+						{
+							"key": "state",
+							"value": "myTestState",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "i1EHil-gDpKkvG-65dU8b0vd5Ff63vQsJYtXQA6s",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "0oa546fn9qVdmB3lj5d7",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://dev-45554186.okta.com/oauth2/default/v1/token",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://dev-45554186.okta.com/oauth2/default/v1/authorize",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https://www.getpostman.com/oauth2/callback",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "okta-token-1",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Github-Access-Token-Request Copy",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "scope",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "86790628cf14714af943ae3273261779eba660c4",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "fb3e42c96a00bef75e0d",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://github.com/login/oauth/access_token",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://github.com/login/oauth/authorize",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "github-token-1",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "body",
+							"type": "string"
+						},
+						{
+							"key": "state",
+							"value": "myTestState",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https://www.getpostman.com/oauth2/callback",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}

@@ -22,7 +22,7 @@ Note:
 	- Microsoft Azure Active Directory
 	- Ping Indentity
 	- Duo Securitys
-	
+		
 
 3) Creating an Account in Octa:
 	- https://developer.okta.com/
@@ -58,7 +58,7 @@ Note:
 
 		 - Note down client id and client secret:
 			- Client id: 0oa546fn9qVdmB3lj5d7
-			- Client secret : i1EHil-gDpKkvG-65dU8b0vd5Ff63vQsJYtXQA6s	
+			- Client secret : **** ( refer Secrets folder in local) 	
 
 5) Change users-ws:
 		- D:\OneDrive\Study\Java\REST-API-Security\11.users-ws-okta
@@ -198,7 +198,7 @@ okta.oauth2.redirect-uri=/authorization-code/callback
 							UserAuthorities: [ROLE_USER, SCOPE_email, SCOPE_openid, SCOPE_profile]	
 
 12)Scopes:
-Configure Consent Scop Authorization server:
+Configure Consent Scope Authorization server:
 	- Okta -> Security -> API -> Authorization Servers -> Click on default link -> Scopes tab :
 				- If required add consent for all scopes viz. openid, profile, email, address, phone, offline_access, device_sso :
 						- edit -> User Consent -> Check 'Require user consent for this scope' -> Uncheck 'Block Services for Requesting this scope'
@@ -222,5 +222,153 @@ Configure Consent Scop Authorization server:
 						- Delete cookies 
 						- https://localhost:8082/users/login
 						- Authorization screen will be shown after enterign teh credentials wfter which we will get consent form asking consent for openid, profile information, email address
-							- UserName: 00u55y4owchfr09y45d7
-							UserAuthorities: [ROLE_USER, SCOPE_email, SCOPE_openid, SCOPE_profile]						
+							UserName: 00u55y4owchfr09y45d7
+							UserAuthorities: [ROLE_USER, SCOPE_email, SCOPE_openid, SCOPE_profile]		
+
+15)OpenID Connect Implementation : 	Getting Access and ID Tokens for Okta using Postman:
+
+	- Redirect URI for Postman: https://www.getpostman.com/oauth2/callback
+	- Okta -> Applications -> Applications-> users-api -> General Settings -> Edit:
+			- Login -> Sign-in redirect URIS -> Add URI -> https://www.getpostman.com/oauth2/callback
+	- Postman:
+		- - Postman:
+		- - Postman:
+		- Okta-Access-ID-Token-Request  / Okta-Access-ID-Token-Request-profile : 
+			- GET: 
+				- Request
+						- Authorization
+							- Type = OAuth2.0
+							- Configure new Token:
+								- Token Name = okta-token-1
+								- Grant type = Authorization code
+								- Callback URL = https://www.getpostman.com/oauth2/callback
+									- Authorize using Browser = leave unchecked
+								- Auth url : https://{your-okta-domain}/oauth2/default/v1/authorize
+											- okta-domain: can be foun din logged in okta url( remeber to deelte '-admin':
+												- https://dev-45554186-admin.okta.com/admin/app/oidc_client/instance/0oa546fn9qVdmB3lj5d7/#tab-general
+											- https://dev-45554186.okta.com/oauth2/default/v1/authorize
+								- Access Token URL: https://{your-okta-domain}/oauth2/default/v1/token
+											- https://dev-45554186.okta.com/oauth2/default/v1/token
+									
+								- Client id: Okta-> Applications ->Applications -> users-api -> Client ID =  0oa546fn9qVdmB3lj5d7
+								- Client secret : Okta-> Applications ->Applications -> users-api -> Client Secret = ***** ( refer Secrets folder in local directory)
+								- Scope = openid
+								- State = myTestState
+								- Client Authentication = Send Client credentials in Body
+								- Delete consent using 'Delete-Grant' request
+								- Press 'Get New Access Token'  button in 'Access-Token-Request' request which we have created now 
+								- You will be presented with Okta Authentication screen 
+										- Enter credentials
+								- Next you will be shown Okta's consent screen with opneid label:
+										- Allow acces
+								- Postman will geenrate as response Access Token & ID Token( because we are uisng OPenID Connect - refer 'OpenIDConnect.png' and '15.OOPenIDConnect.txt'  :
+										- Access Token
+											- Token name = okta-token-1
+											- Token type = Bearer
+											- Expires_in = 3600
+											- Scope = openid ( Note: we can give 'openid profile' if we want profile details in ID TokeN)
+										- id_token
+								- We can see Access Token and id_token as Postman is acting as both Front and Back Channel
+								- Copy Accees Token & id_token:
+										- goto jwt.io
+											- decode token to see jwt details: 
+
+
+
+
+16)OAuth Implementation : :Registering Users-api in GitHub:
+	- Github -> Settings ->Developer Settings -> OAuth Apps -> New OAuth App 
+		- Application name: users-api-2
+		- Homepage url:
+			- Use Postman's homepage: https://www.getpostman.com/oauth2/callback
+		- Authorization callback url:
+			- Use Postman's homepage: https://www.getpostman.com/oauth2/callback
+		- Enable Device flow:
+			- Leave unchecked 
+		- Register application
+		- After registering -> 	Github -> Settings ->Developer Settings -> OAuth Apps -> users-api-2:
+			- Copy Client ID: fb3e42c96a00bef75e0d
+			- Client secret : ****  ( refer Secrets folder in local drive)
+
+17) OAuth Implementation : Getting Access token for Github from Postman:
+	- Note: Remember Github is only OAuth2.0 provider and note OpenIDConnect Provider. Hence we will get only Access token and we will not get ID Token 
+	- - Postman:
+		- Github-Access-Token-Request : 
+			- GET: 
+				- Request
+						- Authorization
+							- Type = OAuth2.0
+							- Configure new Token:
+								- Token Name = github-token-1
+								- Grant type = Authorization code
+								- Callback URL = https://www.getpostman.com/oauth2/callback
+									- Authorize using Browser = leave unchecked
+
+								- Auth url : https://github.com/login/oauth/authorize
+								- Access Token URL: https://github.com/login/oauth/access_token
+										
+									
+								- Client id:Github -> Settings ->Developer Settings -> OAuth Apps -> users-api-2 -> Client ID =  fb3e42c96a00bef75e0d
+								- Client secret : Settings ->Developer Settings -> OAuth Apps -> users-api-2 ->  Client Secret = ****  ( refer Secrets folder in local drive)
+								- Scope = user
+								- State = myTestState
+								- Client Authentication = Send Client credentials in Body
+								- Press 'Get New Access Token'  button in 'Access-Token-Request' request which we have created now 
+								- You will be presented with Github Authentication screen 
+										- Enter credentials
+								- Next you will be shown Github's consent screen w
+										- Allow acces
+								- Postman will geenrate as response Access Token :
+										- Access Token
+											- Token name = github-token-1
+											- Access Token : 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
+											- Token type = Bearer
+											- Scope = user
+										
+								- We can see Access Token as Postman is acting as both Front and Back Channel
+								- Copy Accees Token :
+										- Note: Github access token is not in jwt format
+
+18) OUAth2 vs OIDC( Open ID Connect):
+	- OIDC:
+		- 2 tokens: 
+			- Access Token 
+		      - ID  Token
+		- Token type:
+			- Bearer 
+		- Scope: 
+			- openid
+		- Token type:
+			- jwt 
+
+	- OAuth2.0:
+		- 1 token: 
+			- Access Token 
+		- Token type:
+			- Bearer 
+		- Scope: 
+			- user
+		- Token type:
+			- non-jwt
+
+19)
+	- POSTMAN: See all tokens genrated in POSTMAN:
+		- Okta-Access-ID-Token-Request -> 
+			- Authorization = OAuth2
+			- Access Tokens = Select 'Manage Tokens' from dropdown
+
+
+20) Access token vs ID Token:
+	
+
+	- Access Token 
+		- Subject: email address viz. the user id
+		- jti: 'AT' which is Access Token
+sr 
+
+	- ID Token:
+ 		- Subject: user id is encrypted if scope is 'openid', If more profile details are required use scope = 'openid profile'.
+		- jti: 'ID' which is ID Token 
+		- auth_time : claim for authorization time is available 
+		- idp: id provider 
+							
