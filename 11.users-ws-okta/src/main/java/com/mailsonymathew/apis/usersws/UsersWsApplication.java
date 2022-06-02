@@ -13,14 +13,14 @@ public class UsersWsApplication {
 		SpringApplication.run(UsersWsApplication.class, args);
 	}
 
-    /*
-     * If we do not declare the BCryptPasswordEncoder bean , application will fail to start:
-     */
-    	
-       @Bean
-      
-       public BCryptPasswordEncoder bCryptPasswordEncoder() {
-    	   return new BCryptPasswordEncoder();
-       }
+//    /*
+//     * If we do not declare the BCryptPasswordEncoder bean , application will fail to start:
+//     */
+//    	
+//       @Bean
+//      
+//       public BCryptPasswordEncoder bCryptPasswordEncoder() {
+//    	   return new BCryptPasswordEncoder();
+//       }
 
 }

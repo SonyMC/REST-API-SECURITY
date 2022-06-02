@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 	
-	@RequestMapping("/login")   // url: https://localhost:8082/users/login
+	@RequestMapping("/profile")   // url: https://localhost:8082/users/profile
 	public String loginUser(@AuthenticationPrincipal OAuth2User oAuth2User) {
 		
 		if(oAuth2User != null) {

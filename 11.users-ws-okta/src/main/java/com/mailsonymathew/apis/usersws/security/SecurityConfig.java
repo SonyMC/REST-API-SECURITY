@@ -2,12 +2,9 @@ package com.mailsonymathew.apis.usersws.security;
 
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 
@@ -33,7 +30,7 @@ Cross-Origin Resource Sharing )is a mechanism to allow two different domains to 
 		                                   */
 		                                 // .antMatchers("/v1/authors/{authorId}").access("hasRole('USER') and hasAuthority('GET_AUTHOR')") // Refer AUTHORITIESV2 table
 										 // .antMatchers("/v1/authors").access("hasRole('ADMIN') and hasAuthority('CREATE_AUTHOR')") // Refer AUTHORITIESV2 table        // authorize POST request to create an  Author only for ADMIN( the authority is defined in Authorites table for the username 'admin')
-										  .anyRequest() // Aauthorize all requests
+										  .anyRequest() // Authorize all requests
 										  .authenticated() // Authenticate 
 		                             	  //.and().httpBasic()  // authenticate request using Basic Authentication
 										  // .authenticationEntryPoint(authenticationEntryPoint);  // supply authentication entry point which we have defined in BooksWsAuthneticationEntryPoint 

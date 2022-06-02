@@ -35,10 +35,10 @@
         </appender>
 
         <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${LOGS}\\users-api.log</file>
+            <file>${LOGS}\\authors-apis.log</file>
 
             <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-                <fileNamePattern>${LOGS}\\archived\\library-apis.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <fileNamePattern>${LOGS}\\archived\\authors-apis.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
                 <!-- Maximum size of a log file -->
                 <maxFileSize>20MB</maxFileSize>
                 <!-- Cumulative size of the archive files. If this size goes beyond 10GB then old archived files will be deleted -->
@@ -51,6 +51,8 @@
                 <pattern>%d %p %c{1.} [%t] %m%n</pattern>
             </encoder>
         </appender>
+        <logger name="logging.level.com.okta" value="DEBUG"/>
+        <logger name="logging.level.org.springframework.security" value="DEBUG"/>
         <logger name="logging.file.clean-history-on-start" value="true"/>
 		<logger name="spring.mvc.log-request-details" value="true"/>
         <logger name="org.springframework" level="DEBUG"/>
@@ -73,10 +75,10 @@
         </appender>
 
         <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${LOGS}\\users-ws.log</file>
+            <file>${LOGS}\\authors-apis.log</file>
 
             <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-                <fileNamePattern>${LOGS}\\archived\\user-ws.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <fileNamePattern>${LOGS}\\archived\\authors-apis-prod.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
                 <!-- Maximum size of a log file -->
                 <maxFileSize>50MB</maxFileSize>
                 <!-- Cumulative size of the archive files. If this size goes beyond 10GB then old archived files will be deleted -->

@@ -126,8 +126,8 @@ okta.oauth2.redirect-uri=/authorization-code/callback
 
 
 
-7) Login url using browser:
-			- https://localhost:8082/users/login
+7) User Profile url using browser:
+			- https://localhost:8082/users/profile
 			- Will show not secure -> go to advanced -> contune to local host:
 					- Rsponse : 400 Bad Request
 			- Okta -> Applications -> Applications -> users-api -> 
@@ -160,7 +160,7 @@ okta.oauth2.redirect-uri=/authorization-code/callback
 
 10) Retart server for users-ws:
 		- Delete cookies 
-		- https://localhost:8082/users/login
+		- https://localhost:8082/users/profile
 		- Authorization Screen will be shoen first 
 				- Enter creds( mailsonymathew@gmail.com, Ro@@@@@@)
 		- Okta consent screen screen will be shown next 
@@ -192,7 +192,7 @@ okta.oauth2.redirect-uri=/authorization-code/callback
 						
 					- Go to browser:
 						- Delete cookies 
-						- https://localhost:8082/users/login
+						- https://localhost:8082/users/profile
 						- Authorization screen will be shown after enterign teh credentials wfter which we will get consent form
 							- UserName: 00u55y4owchfr09y45d7
 							UserAuthorities: [ROLE_USER, SCOPE_email, SCOPE_openid, SCOPE_profile]	
@@ -220,7 +220,7 @@ Configure Consent Scope Authorization server:
 								
 14)Go to browser:
 						- Delete cookies 
-						- https://localhost:8082/users/login
+						- https://localhost:8082/users/profile
 						- Authorization screen will be shown after enterign teh credentials wfter which we will get consent form asking consent for openid, profile information, email address
 							UserName: 00u55y4owchfr09y45d7
 							UserAuthorities: [ROLE_USER, SCOPE_email, SCOPE_openid, SCOPE_profile]		
