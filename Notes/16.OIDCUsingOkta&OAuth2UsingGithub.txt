@@ -51,6 +51,7 @@ Note:
 		 - Logo = Optional
 		 - Grant type : Client acting on behalf of a user = Authorization Code
 		 - Sign-in redirect URIs = http://localhost:8082/authorization-code/callback
+		                            https://www.getpostman.com/oauth2/callback
 		  - Logout Redirect uri = http://localhost:8082
 		 - Base URIs = http://localhost:8082/
 		 - Assignments = Allow everyone in your organization to access 
@@ -110,7 +111,9 @@ Note:
 			- Client secret:
 				- Copy from home-apge of users-api in Okta 	
 			- Redirect uri
-				-  Copy last part of Sign-in redirect uri from home-apge of users-api in Okta 		
+				-  Copy last part of Sign-in redirect uri from home-apge of users-api in Okta 	
+
+           ***Note : Make sure there is no blank spaces after the end of the url				
 
 ## Okta Related properties for OAuth2
 # issuer = copy the base url in the browser from the Okta user home page and append it with 'oauth2/default'

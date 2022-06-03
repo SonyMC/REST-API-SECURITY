@@ -21,7 +21,7 @@ Note:
 		 - App integration Name = authors-api
 		 - Logo = Optional
 		 - Grant type : Client acting on behalf of a user = Authorization Code
-		 - Sign-in redirect URIs = http://localhost:8081/authorization-code/callback
+		 - Sign-in redirect URIs = https://localhost:8081/authorization-code/callback
 			- Add new url: https://www.getpostman.com/oauth2/callback
 		  -Sign-out Redirect uri = http://localhost:8081
 		 - Base URIs = http://localhost:8081/
@@ -75,7 +75,9 @@ Note:
 			- Client secret:
 				- Copy from home-apge of authors-api in Okta 	
 			- Redirect uri
-				-  Copy last part of Sign-in redirect uri from home-apge of authors-api in Okta 		
+				-  Copy last part of Sign-in redirect uri from home-apge of authors-api in Okta 	
+
+						****Note : Make sure there is no blank spaces ater the end of the url
 
 
 			- Comment out mySQl and Hibernate properties 
@@ -127,7 +129,7 @@ Okta-> Security-> API -> Authorization Servers-> default ->scopes
 				
 7)Postman:	
 
-*** Note: I have not been able to get teh authorities workign from Okta  and the authors=ws-api returns bad request!!! Thsi migh tbe because I am using free version of Okta with limited functionality. However this still be used as a guide
+
 
 Okta-AUTHOR-POST-ADMIN:
 		- Delete all cookies 
@@ -172,7 +174,7 @@ Okta-AUTHOR-POST-ADMIN:
 								
 15)Postman:	
 
-*** Note: I have not been able to get teh authorities workign from Okta  and the authors=ws-api returns bad request!!! Thsi migh tbe because I am using free version of Okta with limited functionality. However this still be used as a guide
+
 
 	Okta-AUTHOR-GET-USER:
 	GET: https://localhost:8081/v1/authors/12345678912
