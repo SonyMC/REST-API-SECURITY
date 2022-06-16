@@ -68,6 +68,10 @@ D:\OneDrive\Study\Java\REST-API-Security\12.authors-ws-hmac
 
 - New class : security/HmacFilter.java
 
+- Delete: 
+	- security/User.java
+	- security/UserDetailsServiceImpl.java
+
 - Change: 
 	- Secur-tyConfig.java
 		- Comment out all antMatchers as we are not doing any Authorizations
