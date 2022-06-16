@@ -26,10 +26,10 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 
 
-//1. This class will be called by the user after getting the JWT token in the JwtAuthenticationFilter class in USer-WS.
+//1. This class will be called by the user after getting the JWT token in the JwtAuthenticationFilter class in User-ws.
 //2. This class will essentially allow the user to call subsequent APIs using the JWT issued in JwtAuthenticationFilter class.
 //3. We will extend BasicAuthenticationFilter which is used to authorize details in the Http Request Header 
-public class JwtAuthorizationFilter  extends BasicAuthenticationFilter { // Note: BasicAuthenticationFilte will be used  in Spring Security Filter chain when the JWT token is passed in the Authorization Header
+public class JwtAuthorizationFilter  extends BasicAuthenticationFilter { // Note: BasicAuthenticationFilter will be used  in Spring Security Filter chain when the JWT token is passed in the Authorization Header
 
 	// create logger
 	private static Logger logger = LoggerFactory.getLogger(JwtAuthorizationFilter.class);
@@ -56,7 +56,7 @@ public class JwtAuthorizationFilter  extends BasicAuthenticationFilter { // Note
 		String authorizationHeader = request.getHeader(SecurityConstants.AUTHORIZATION_HEADER); // AUTHORIZATION_HEADER = '"Authorization"
 		
 		// Validate the Authorization Header in Request containing the JWT
-		// In case there is no authorisation header OR the authorisation header length is zero OR there is one but it does not cstart with  "Bearer " 
+		// In case there is no authorisation header OR the authorisation header length is zero OR there is one but it does not start with  "Bearer " 
 		// then ignore header & return control back to filter back to filter chain 
 		if( authorizationHeader == null	||    
 			authorizationHeader.trim().length() == 0 ||	

@@ -129,7 +129,7 @@ Okta-> Security-> API -> Authorization Servers-> default ->scopes
 				
 7)Postman:	
 
-Note: Though I get a success resonse ( 200) back, I am unabke to see the actual author-ws response and instead am shown the xml of okta login page. However this can be used a a guide for cofigurign OIDC.
+
 
 Okta-AUTHOR-POST-ADMIN:
 		- Delete all cookies 

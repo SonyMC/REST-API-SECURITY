@@ -1,0 +1,119 @@
+D:\OneDrive\Study\Java\REST-API-Security\12.authors-ws-hmac
+
+HMAC
+------
+- Hash Message Authnetication Code
+- Mainly a concept of N/W security but is/can be used for REST API Security
+- Secures in 2 ways:
+	- verifies request is coming a known and expected source
+	- validates message integrity i.e the request has not been tampered with while in transit 
+- Concept is soemwhat similar to JWT
+=-Example
+	- AWS uses it to authenticate calls to S3
+	- When sending notification use webhooks
+	- When you expose API for partners 
+	- Can be used even without TLS because we do not send password 
+
+- Client Side Steps:
+	- Client and Server exchange a secret string( in a secre way)
+	- Server tells the client how( which parameters to use) to generate the hashed code
+	- Client computes the hash of all parms together usign teh secret string
+	- Client then B64 encodes the 
+		- Client sends the parameters involved in hashing along with computed B64 value( as Htpp Header)
+	- It then becomes : Base64 (HMAC - SHA - 256( SecretString, StrignToSign))
+
+- Server side steps:
+	- Server identfis the clent when it recieves the request 
+	- If client is valid, the server computes the hash using the same mechanism as the client
+	- Server then B64 encodes the computed hash 
+	- Server compars the computed B64 with teh value present in the request( as a Http header)
+	- If both of them match then request is authentic and it proceeds further
+	- If not then server returns an error
+
+- Defining Server standards
+	- Note: There is no defined standard and each service can define the HMAC independently
+	- Hashing algorithm : SHA256
+	- String to Sign for Request with no body( GET, DELETE):
+		- HTTP Verb::Path:Date
+	- String to Sign for Request with body(POST,PUT):
+		- HTTP Verb:: Path ::Date::Body
+	- Customer HTTP Headers to be sent by Client:
+		- X-HMAC-VALUE:
+			- B64 encoded value of teh Hash 
+			- Psuedo code : B64 ( HMAC - SHA - 256( SecretString, String to Sign))
+			- StringToSign is derived from Step 2 or 3
+		- X-Date:
+			- Current data and time in ISO format ( dd-MM-yyyy hh:mm:ss)
+		- X-Username:
+			- Username for user/partner/system sendign the request
+
+
+	
+
+Authors-ws
+-------------
+D:\OneDrive\Study\Java\REST-API-Security\12.authors-ws-hmac
+
+
+
+- POM.XML
+	- Comment out JPA, SQL Connector, JWT, Okta dependencies
+	- add Apache library for hash calulation: commons-codec
+
+- application.properties
+	- comment out Okta properties
+
+- Note: Spring does not provide any standard filter for HMAC. So we will extend existign Spring Securty Filter : BasicAuthenticationFilter
+	  - We will only define a customised filter for Authentication. We will not defien any filter for Authorization. 
+
+- New class : security/HmacFilter.java
+
+- Change: 
+	- Secur-tyConfig.java
+		- Comment out all antMatchers as we are not doing any Authorizations
+		- Register our HmacFilter
+		- Comment out oAuthLogin code
+	
+
+- Testing the api:
+	- Creating headers in teh request:
+		- Google search for 'hmac calculator online':
+			- https://www.freeformatter.com/hmac-generator.html
+				- String to Sign for Request with no body( GET, DELETE):
+					- HTTP Verb:: Path ::Date::Body
+						- GET::/v1/authors/12345678912::16-06-2022 15:24:59
+					- Secret Key = partner-1-secret  ( defined in HmacFilter.java)
+					- Digest algorithm =SHA256
+					- Computed HMAC = 58d48a118a28955d940743488e02fc107309487f7dccb6e9c2a61a621068ac32
+					- B64 encoded value of the HMAC:
+						- https://www.base64encode.org/
+						- encode the above HMAC = NThkNDhhMTE4YTI4OTU1ZDk0MDc0MzQ4OGUwMmZjMTA3MzA5NDg3ZjdkY2NiNmU5YzJhNjFhNjIxMDY4YWMzMg==
+				- String to Sign for Request with body(POST,PUT):
+					- HTTP Verb:: Path ::Date::Body
+						- POST::/v1/authors::16-06-2022 15:24:59
+					- Secret Key = partner-2-secret  ( defined in HmacFilter.java)
+					- Digest algorithm =SHA256
+					- Computed HMAC = dd23f5eda9b32bcd3fdbbadf9c4a06cb3591be852bd802e75a0fdb2d37c4eb63
+					- B64 encoded value of the HMAC:
+						- https://www.base64encode.org/
+						- encode the above HMAC = ZGQyM2Y1ZWRhOWIzMmJjZDNmZGJiYWRmOWM0YTA2Y2IzNTkxYmU4NTJiZDgwMmU3NWEwZmRiMmQzN2M0ZWI2Mw==
+		- Headers in request:
+			- GET
+				- X-HMAC-VALUE: NThkNDhhMTE4YTI4OTU1ZDk0MDc0MzQ4OGUwMmZjMTA3MzA5NDg3ZjdkY2NiNmU5YzJhNjFhNjIxMDY4YWMzMg==
+				- X-Date      : 16-06-2022 15:24:59
+				- X-Username  : partner-1   ( defined in HmacFilter.java)
+			- POST:
+				- X-HMAC-VALUE: ZGQyM2Y1ZWRhOWIzMmJjZDNmZGJiYWRmOWM0YTA2Y2IzNTkxYmU4NTJiZDgwMmU3NWEwZmRiMmQzN2M0ZWI2Mw==
+				- X-Date      : 16-06-2022 15:24:59
+				- X-Username  : partner-2   ( defined in HmacFilter.java)
+
+		- POSTMAN:
+			: HMAC-AUTHOR-GET-USER
+				- GET: https://localhost:8081/v1/authors/12345678912
+				- Add Headers X-HMAC-VALUE, X-Date, X-Username
+				- Success : 200
+			: HMAC-AUTHOR-POST
+				- POST: https://localhost:8081/v1/authors
+				- Add Headers X-HMAC-VALUE, X-Date, X-Username
+				- Success : 201
+			- Try changing any header value and you will get 403 forbidden error

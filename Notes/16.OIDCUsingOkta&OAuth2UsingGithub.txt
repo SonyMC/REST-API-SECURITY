@@ -50,7 +50,7 @@ Note:
 		 - Name = users-api
 		 - Logo = Optional
 		 - Grant type : Client acting on behalf of a user = Authorization Code
-		 - Sign-in redirect URIs = http://localhost:8082/authorization-code/callback
+		 - Sign-in redirect URIs = https://localhost:8082/authorization-code/callback
 		                            https://www.getpostman.com/oauth2/callback
 		  - Logout Redirect uri = http://localhost:8082
 		 - Base URIs = http://localhost:8082/

@@ -1,0 +1,30 @@
+MFA  : Multi Factor Authentication 
+
+1) Okta -> Security -> Authenticators -> Add Authenticator -> Select Email or Google Authenticator or Phone or any other  option 
+	: Setup tab:
+		- Email : 
+			- challenge lifetime = 5 minutees 
+			- used for =Authentication and Recovery
+      : Enrollment tab:
+		- Add Multifactor Policy
+		- Name = MFA-EMail-Policy
+		- Assign to Groups = Everyone
+		- Eligible Authneticators : Email = REquired ; Password = Required; Security Question = Optional 
+		- Add Rule Window will pop up:
+			- Rule name = Email-Rule
+					- Configure as required 
+
+2) Postman:
+	- Delete-Grant:
+		- Response : 204
+
+	- Okta-AUTHOR-GET-USER:
+		- GET :  https://localhost:8081/v1/authors/12345678912
+		- Geenrate new access token after dfleeting cookies :
+			- Okta sign in page wil lbe shown followd by consent page 
+			- One time code shoudl be sent to email ( Note:  I have not been abl eto mak ethis work) 
+		
+
+	
+
+

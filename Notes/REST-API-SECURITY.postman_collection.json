@@ -842,6 +842,151 @@
 			"response": []
 		},
 		{
+			"name": "HMAC-AUTHOR-POST",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-HMAC-VALUE",
+						"value": "ZGQyM2Y1ZWRhOWIzMmJjZDNmZGJiYWRmOWM0YTA2Y2IzNTkxYmU4NTJiZDgwMmU3NWEwZmRiMmQzN2M0ZWI2Mw==",
+						"type": "text"
+					},
+					{
+						"key": "X-Date",
+						"value": "16-06-2022 15:24:59",
+						"type": "text"
+					},
+					{
+						"key": "X-Username",
+						"value": "partner-2",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"authorId\": \"KR\",\r\n    \"firstName\": \"Kaduva\",\r\n    \"lastName\": \"Ramendran\",\r\n    \"email\": \"kadurab@hotmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8081/v1/authors",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Okta-AUTHOR-POST-ADMIN",
+			"protocolProfileBehavior": {
+				"followOriginalHttpMethod": false
+			},
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessTokenUrl",
+							"value": "https://dev-45554186.okta.com/oauth2/default/v1/token",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://dev-45554186.okta.com/oauth2/default/v1/authorize",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https://www.getpostman.com/oauth2/callback",
+							"type": "string"
+						},
+						{
+							"key": "useBrowser",
+							"value": false,
+							"type": "boolean"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "eJ_KQgs2sROoRFDi2R88ENHpRcnxNQq1flaR6HQA",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "0oa58svwpgLc53OEt5d7",
+							"type": "string"
+						},
+						{
+							"key": "state",
+							"value": "myTestState",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "openid",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "okta-token-2",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "body",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"authorId\": \"KR\",\r\n    \"firstName\": \"Kaduva\",\r\n    \"lastName\": \"Ramendran\",\r\n    \"email\": \"kadurab@hotmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8081/v1/authors",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "AUTHOR-GET-USER",
 			"request": {
 				"auth": {
@@ -873,12 +1018,205 @@
 			"response": []
 		},
 		{
-			"name": "Okta-login",
+			"name": "HMAC-AUTHOR-GET-USER",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-HMAC-VALUE",
+						"value": "NThkNDhhMTE4YTI4OTU1ZDk0MDc0MzQ4OGUwMmZjMTA3MzA5NDg3ZjdkY2NiNmU5YzJhNjFhNjIxMDY4YWMzMg==",
+						"type": "text"
+					},
+					{
+						"key": "X-Date",
+						"value": "16-06-2022 15:24:59",
+						"type": "text"
+					},
+					{
+						"key": "X-Username",
+						"value": "partner-1",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:8081/v1/authors/12345678912",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"authors",
+						"12345678912"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Okta-AUTHOR-GET-USER",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "useBrowser",
+							"value": false,
+							"type": "boolean"
+						},
+						{
+							"key": "clientSecret",
+							"value": "eJ_KQgs2sROoRFDi2R88ENHpRcnxNQq1flaR6HQA",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "0oa58svwpgLc53OEt5d7",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "openid",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "state",
+							"value": "myTestState1",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "okta-token-2",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "body",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://dev-45554186.okta.com/oauth2/default/v1/token",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://dev-45554186.okta.com/oauth2/default/v1/authorize",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https://www.getpostman.com/oauth2/callback",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:8081/v1/authors/12345678912",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"authors",
+						"12345678912"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Okta-user-profile",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "openid profile",
+							"type": "string"
+						},
+						{
+							"key": "state",
+							"value": "myTestState1",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "i1EHil-gDpKkvG-65dU8b0vd5Ff63vQsJYtXQA6s",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "okta-token-2",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "body",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "0oa546fn9qVdmB3lj5d7",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://dev-45554186.okta.com/oauth2/default/v1/token",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://dev-45554186.okta.com/oauth2/default/v1/authorize",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https://www.getpostman.com/oauth2/callback",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://localhost:8082/users/login",
+					"raw": "https://localhost:8082/users/profile",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -886,7 +1224,7 @@
 					"port": "8082",
 					"path": [
 						"users",
-						"login"
+						"profile"
 					]
 				}
 			},

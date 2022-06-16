@@ -59,10 +59,12 @@
 		// If we use this,in browser: Spring login page will be presented where we have to enter teh userid as 'user' and pwd as geernated in the Spring console during startup
        // In POSTMAN we can provide the basic authorization creds 
 -->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+
 		<!-- Note : Since we are using Okta, remove JWT dependencies -->
 		<!--JWT :  Handling JWT handling functionality . We have to specify version as this is not packaged with Spring Boot -->
 		<!-- 
